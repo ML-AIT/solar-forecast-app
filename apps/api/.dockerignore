@@ -1,0 +1,21 @@
+# Only requirements.txt and app/ are needed in the image.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+tests/
+forecasts/
+data/
+.env
+.env.*
+*.md
+.git
+.gitignore
+Dockerfile
+.dockerignore
