@@ -1,0 +1,41 @@
+name: Deploy Web (Azure Static Web Apps)
+
+# Disabled until Azure is set up: set repository variable DEPLOY_WEB=true,
+# variable API_BASE_URL (https://<api-fqdn>) and secret AZURE_STATIC_WEB_APPS_API_TOKEN.
+on:
+  push:
+    branches: [main]
+    paths: ["apps/web/**", ".github/workflows/deploy-web.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: vars.DEPLOY_WEB == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Build static site
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          npm ci
+          npm run build
+
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: apps/web/out
+          skip_app_build: true
+          skip_api_build: true
