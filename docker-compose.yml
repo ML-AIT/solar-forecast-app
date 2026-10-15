@@ -1,0 +1,28 @@
+# Local development: API on :8000, web on :3000.
+#   docker compose up --build
+services:
+  api:
+    build: ./apps/api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      FORECAST_PROVIDER: demo          # "file" to read JSON written by the ML job
+      FORECAST_DIR: /data/forecasts
+      ALLOWED_ORIGINS: http://localhost:3000
+    volumes:
+      - ./data/forecasts:/data/forecasts:ro
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --hostname 0.0.0.0"
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    depends_on:
+      - api
