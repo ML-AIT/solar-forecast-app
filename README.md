@@ -8,9 +8,9 @@ deployed on **Azure** with **GitHub Actions** CI/CD. The ML model is trained in 
 solar-forecast-app/
 ├── apps/
 │   ├── api/            FastAPI service (Python 3.12, Docker)   → Azure Container Apps
-│   └── web/            Next.js dashboard (static export)       → Azure Static Web Apps
+│   └── web/            Next.js dashboard (static export)       → Azure Static Web Apps  (design: DESIGN.md)
 ├── infra/azure/        one-time Azure setup commands
-├── docs/architecture.md   architecture + stack decision
+├── docs/               architecture.md (stack decision) · frontend-requirements.md (dashboard brief)
 ├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml
 ├── docker-compose.yml  run both locally
 ├── AGENTS.md           rules for contributors & AI agents

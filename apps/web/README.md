@@ -5,6 +5,10 @@ A single-page dashboard that shows the day-ahead 15-minute PV power forecast
 builds plain HTML/JS/CSS into `out/`, and the browser fetches data from the
 FastAPI backend (`apps/api`).
 
+> **Building the next version?** The plan is a station overview page (`/`) plus a station monitoring page
+> (`/station/?id=S01`). Requirements and tickets are in [docs/frontend-requirements.md](../../docs/frontend-requirements.md),
+> and the visual rules (dark theme, tokens, fonts, layout) are in [DESIGN.md](DESIGN.md).
+
 ## Stack
 
 - Next.js 16 (App Router, `output: "export"`), React 19, TypeScript, ESLint 9
