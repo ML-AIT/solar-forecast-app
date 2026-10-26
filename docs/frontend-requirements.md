@@ -1,6 +1,6 @@
 # Frontend requirements: station overview and station monitoring
 
-Status: **ready to start** · Owner: *(team lead to assign)* · Target: working on Azure before Phase 3 (16 Nov 2026)
+Status: **ready to start** · Owner: **Ice (Nattapat Rueangput)** · Target: working on Azure before Phase 3 (16 Nov 2026)
 
 This is the brief for building the dashboard in `apps/web`. It says what to build, in what order, and how we will know
 each part is done. Visual rules are in [apps/web/DESIGN.md](../apps/web/DESIGN.md). How the web app works and how to
@@ -29,7 +29,7 @@ run it is in [apps/web/README.md](../apps/web/README.md).
  │ ┌ S01 Sa Kaeo ──────┐ ┌ S02 Prachuap ─────┐ ┌ S03 ... ┐ ┌ S04 ... ┐     │
  │ │ ● Forecast ready  │ │ ⚠ Fallback model  │ │         │ │ ✖ Missing│    │
  │ │ ⌒ sparkline P50   │ │ ⌒                 │ │         │ │         │     │
- │ │ 31.2 MWh · 5.1 MW │ │ ...               │ │         │ │         │     │
+ │ │31.2 MWh · 5,100 kW│ │ ...               │ │         │ │         │     │
  │ │ cap 6,000 kW      │ │                   │ │         │ │         │     │
  │ │ issued 2 h ago    │ │                   │ │         │ │         │     │
  │ └───────────────────┘ └───────────────────┘ └─────────┘ └─────────┘     │
@@ -51,8 +51,8 @@ run it is in [apps/web/README.md](../apps/web/README.md).
 |---|---|
 | O1 | Loads the plant list (`GET /api/v1/plants`), then **tomorrow's** forecast for every plant **in parallel** (`GET /api/v1/forecast`). "Tomorrow" means tomorrow in Asia/Bangkok, computed in the browser (`tomorrowInBangkok()` in `lib/format.ts`). |
 | O2 | KPI row: **total P50 energy for all plants** (kWh, only from plants that have a complete forecast, labelled "*n* of 4 plants"), **plants with a forecast** ("3 / 4"), and **latest issue time**. |
-| O3 | One **station card** per plant: name and ID, capacity, a status badge, a P50 **sparkline**, P50 energy (kWh) and peak (kW), and "issued *x* h ago". |
-| O4 | Status badge rules: `● Forecast ready` (ok) · `⚠ Stale` (warn, issued more than 36 h ago) · `⚠ Fallback model` (warn, see §4) · `✖ No forecast` (bad, API 404) · `✖ Error` (bad, any other failure). |
+| O3 | One **station card** per plant: name and ID, capacity, a status badge, a P50 **sparkline**, P50 energy (kWh) and peak (kW), and "issued *x* h ago" (same future-time rule as S5: if `issued_at` is in the future, show the issue time and no age). |
+| O4 | Status badge rules: `● Forecast ready` (ok) · `⚠ Stale` (warn, issued more than 36 h ago) · `⚠ Fallback model` (warn, see §4) · `✖ No forecast` (bad, API 404) · `✖ Error` (bad, any other failure). If several apply, show only the first in this order: Error > No forecast > Fallback > Stale > Ready. Detect 404 with `err.status === 404` (see FE-1), never by parsing the message. |
 | O5 | The whole card links to `/station/?id=<plant_id>`. It works with the keyboard (Tab + Enter) and shows a visible focus ring. |
 | O6 | If one plant's forecast fails, **the other cards still render**. A failure must not blank the page. |
 | O7 | API status pill in the header (this exists today: it polls `/health` every 60 s). If the API is offline, show one alert banner with the API URL instead of four broken cards. |
@@ -120,11 +120,11 @@ parallel by different people.
 
 | ID | Ticket | Depends on | Size | Done when |
 |---|---|---|---|---|
-| FE-1 | **Design tokens + app shell**: replace colours in `globals.css` with the DESIGN.md tokens (dark only), load fonts through `next/font`, add a shared header (title, API status pill, time-zone note) and a 12-column layout container | – | S | Existing page renders in the new theme; lint, typecheck and build pass |
+| FE-1 | **Design tokens + app shell**: replace colours in `globals.css` with the DESIGN.md tokens (dark only), load fonts through `next/font`, add a shared header (title, API status pill, time-zone note) and a 12-column layout container. In `lib/api.ts`, add an `ApiError` class with a `status` field (thrown by `getJson`), and change `Plant.lat`/`lon` to `number \| null` (the API returns `null` for S03/S04). Switch the chart's `.grid` from `--grid` to `--border` | – | S | Existing page renders in the new theme; lint, typecheck and build pass |
 | FE-2 | **Overview page**: O1–O7, including the `StationCard` component and the `Sparkline` component | FE-1 | M | 4 cards from demo API; one plant failing (e.g. stop the API mid-load, or mock 404) leaves the others intact |
 | FE-3 | **Station page skeleton**: route `/station/`, `id`/`date` query params, header, date navigation, KPI row (S1–S3, S8) | FE-1 | M | Deep link `/station/?id=S02&date=2026-10-20` opens the right plant and date; unknown ID shows "not found" |
 | FE-4 | **Chart restyle**: `ForecastChart` to DESIGN.md (S4), plus touch support for the hover readout on tablets | FE-1 | S | Chart matches tokens; readout works with mouse and touch |
-| FE-5 | **Status panel + alerts**: S5, the shared `Alert` and `StatusBadge` components (also used by FE-2), `forecast_mode` optional type (§4) | FE-1 | S | Stale, missing, fallback and short-points states each render (test by editing a demo response or with a mocked fetch) |
+| FE-5 | **Status panel + alerts**: S5, the shared `Alert` and `StatusBadge` components (also used by FE-2), `forecast_mode` optional type (§4) | FE-1 | S | Stale, missing, fallback and short-points states each render. Missing: file provider (§8). Stale: pick a past date. Fallback and fewer than 96 points cannot come from the API (the API rejects short forecasts with 500, and `forecast_mode` needs BE-1), so test them with a mocked response in the frontend |
 | FE-6 | **Downloads + data table**: S6, S7 | FE-3 | S | CSV opens correctly in Excel with 96 rows + header; JSON equals the API response |
 | FE-7 | **Responsive + accessibility pass**: G2, keyboard navigation, `aria-label`s on charts, colour never the only signal | FE-2, FE-3 | S | Checked at 1280 / 768 / 375 px; Lighthouse accessibility score of 90 or more on both pages |
 | FE-8 | **Docs**: update `apps/web/README.md` (pages, components, file map), and add screenshots to the PR | FE-2, FE-3 | XS | README matches the code |
@@ -135,7 +135,7 @@ Sizes: XS takes under 2 h, S is about half a day, and M is 1–2 days.
 ## 7. Definition of done (every frontend PR)
 
 - [ ] Branch `feat/<ticket-id>-short-name`, PR into `main`, one review, CI green (AGENTS.md).
-- [ ] `cd apps/web && npm run lint && npx tsc --noEmit && npm run build` all pass locally. Paste the result in the PR.
+- [ ] `cd apps/web && npm run lint && npm run typecheck && npm run build` all pass locally (same as CI). Paste the result in the PR.
 - [ ] Tested against the local API in demo mode (`docker compose up --build`, or run `apps/api` with uv).
 - [ ] Screenshots at 1280 px and 768 px in the PR description.
 - [ ] Uses only DESIGN.md tokens (no new hex codes in components). No `any`. No new dependency without a reason.
@@ -151,7 +151,9 @@ cd apps/web && npm ci && cp .env.example .env.local && npm run dev # terminal 2 
 
 **Testing failure states.** Demo mode returns a forecast for every known plant and every date, so it never gives a
 404. To see the "No forecast" state, run the API with the file provider and an empty folder:
-`FORECAST_PROVIDER=file FORECAST_DIR=./empty uv run uvicorn app.main:app --reload`. Every forecast then returns 404,
+`FORECAST_PROVIDER=file FORECAST_DIR=./empty uv run uvicorn app.main:app --reload` (Git Bash/macOS/Linux) or
+`$env:FORECAST_PROVIDER="file"; $env:FORECAST_DIR="./empty"; uv run uvicorn app.main:app --reload` (PowerShell).
+You can also put both variables in `apps/api/.env`. Every forecast then returns 404,
 while `/api/v1/plants` still works. To see "API offline", stop the API.
 
 Then read, in this order: [apps/web/README.md](../apps/web/README.md) → [apps/web/DESIGN.md](../apps/web/DESIGN.md) →

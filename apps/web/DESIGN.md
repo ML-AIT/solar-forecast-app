@@ -36,10 +36,17 @@ Define these once as CSS variables in `app/globals.css`. Components use only `va
 | `--ok` | `#32D74B` | Status: API online, forecast available, primary model |
 | `--warn` | `#FFD60A` | Status: fallback model, stale forecast, partial data *(added, not in original)* |
 | `--bad` | `#FF453A` | Status: API offline, forecast missing, error |
-| `--bad-bg` | `#3A1C1C` | Alert box background |
+| `--bad-bg` | `#3A1C1C` | Error alert background |
+| `--warn-bg` | `rgba(255, 214, 10, 0.10)` | Warning alert background |
+| `--on-accent` | `#121212` | Text on `--accent` buttons |
+| `--accent-fade` | `rgba(0, 229, 255, 0)` | Transparent end of the sparkline gradient |
 
 Rules:
 
+- Set `color-scheme: dark` on `:root` (not only inside a media query), so native controls such as the date picker
+  render dark.
+- The chart grid uses `--border`. Remove the old `--grid` token and change `.grid` in `ForecastChart.module.css`
+  to `var(--border)` in the same PR.
 - Status colours (`--ok`, `--warn`, `--bad`) mean **status only**. Never use them to decorate a chart.
 - Never show a status by colour alone. Always pair it with a text label or an icon, such as "● Online" or "⚠ Fallback".
 - Do not use pastel colours or white or light backgrounds.
@@ -68,15 +75,14 @@ Units sit after the number, smaller and `--muted`: **4,812** <small>kWh</small>.
   border. On keyboard focus, show a 2 px `--accent` outline.
 - **Charts**: grid lines in `--border`, axis text in `--muted` at 12 px. P50 is a 2 px `--accent` line. P10–P90 is
   a `--band` area with no outline. No thick borders around the plot. Use an area style for the
-  P50 sparkline on station cards (`--accent` to transparent gradient). The hover readout shows time and P10/P50/P90
+  P50 sparkline on station cards (`--accent` to `--accent-fade` gradient). The hover readout shows time and P10/P50/P90
   in the Data font.
 - **Tables**: rows have `border-bottom: 1px solid var(--border)`, and a hovered row uses `--surface-hover`. Numbers
   are right-aligned.
 - **Alerts**: `background: var(--bad-bg)`, `color: var(--bad)`, `border-left: 4px solid var(--bad)`,
-  `border-radius: 8px`, `padding: 12px 16px`. A warning alert uses `--warn` with `rgba(255, 214, 10, 0.10)` as
-  the background.
+  `border-radius: 8px`, `padding: 12px 16px`. A warning alert uses `--warn` with `--warn-bg` as the background.
 - **Status pill**: a small rounded pill with a coloured dot and a text label, e.g. `● API online`.
-- **Buttons**: primary buttons have an `--accent` background with `#121212` text. Secondary buttons are transparent
+- **Buttons**: primary buttons have an `--accent` background with `--on-accent` text. Secondary buttons are transparent
   with a `1px solid var(--border)` border and `--text` text. Radius 8 px, height 36 px.
 - **Inputs** (date picker, select): `--surface` background, `--border` border, radius 8 px, height 36 px, and an
   `--accent` focus ring.
@@ -105,7 +111,7 @@ a sun, a lightning bolt, a gauge, a solar panel or a clock. Do not use a generic
 - ❌ Do not use white or pastel backgrounds or light mode.
 - ❌ Do not use red or green for anything that is not a status.
 - ❌ Do not show real PEA measurements (actual power) on any public page. See the
-  [frontend requirements](../../docs/frontend-requirements.md#out-of-scope).
+  [frontend requirements](../../docs/frontend-requirements.md#5-out-of-scope-for-now).
 
 ## 8. Changes from the original
 
@@ -121,6 +127,29 @@ a sun, a lightning bolt, a gauge, a solar panel or a clock. Do not use a generic
 <details>
 <summary>Original licence (MIT)</summary>
 
-The original design text is © its author ([@groquispe100inf-max](https://designmd.ai/groquispe100inf-max)) and is
-published on designmd.ai under the MIT licence, which allows use, copying and modification with attribution.
+The original DESIGN.md is published on designmd.ai under the MIT licence:
+
+```
+MIT License
+
+Copyright (c) 2026 @groquispe100inf-max (designmd.ai)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 </details>
