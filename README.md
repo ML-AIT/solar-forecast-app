@@ -24,7 +24,7 @@ solar-forecast-app/
 docker compose up --build            # web → http://localhost:3000, API → http://localhost:8000/docs
 
 # Option B: run each app directly
-cd apps/api && python -m venv .venv && source .venv/Scripts/activate && pip install -e ".[dev]" && uvicorn app.main:app --reload
+cd apps/api && uv sync && uv run uvicorn app.main:app --reload   # needs uv: https://docs.astral.sh/uv/
 cd apps/web && npm ci && npm run dev
 ```
 
