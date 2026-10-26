@@ -22,7 +22,7 @@ ACR=acrsolar$RANDOM              # must be globally unique, lowercase letters/di
 ENV=cae-solar
 API=solar-api
 SWA=solar-web
-GH_REPO=pcismyname/solar-forecast-app
+GH_REPO=ML-AIT/solar-forecast-app
 ```
 
 ## 2. Create resources
