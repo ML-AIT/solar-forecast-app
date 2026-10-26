@@ -15,7 +15,7 @@ The grade is about the ML work plus a working, reproducible deployment. The fron
 |---|---|---|---|
 | Model serving | **FastAPI** in a **container** on **Azure Container Apps** | Satisfies "containers" directly. Python is the same language as the ML code. It scales to zero, so it is cheap | One service. No database, auth server or message queue. Forecasts are JSON files |
 | Forecast generation | **Container Apps Job** on a daily cron (built from the ML repo) | Day-ahead forecasting is a **batch** problem, so nothing needs to predict live on each request | The API only reads precomputed forecasts |
-| Dashboard | **Next.js static export** on **Azure Static Web Apps (Free)** | The tech stack is already agreed; Static Web Apps is free and has built-in CI/CD | No server-side rendering, no Next.js API routes, no auth. One page that fetches from the API |
+| Dashboard | **Next.js static export** on **Azure Static Web Apps (Free)** | The tech stack is already agreed; Static Web Apps is free and has built-in CI/CD | No server-side rendering, no Next.js API routes, no auth. Two client-side pages (station overview, station detail) that fetch from the API. See [frontend-requirements.md](frontend-requirements.md) |
 | CI/CD | **GitHub Actions**: CI on every PR, deploy on merge to `main` (OIDC login) | It is the simplest pipeline the professor will accept | 3 workflow files |
 
 **When it *would* be over-engineering:** running Next.js as a server, adding a database, user accounts, Kubernetes,
