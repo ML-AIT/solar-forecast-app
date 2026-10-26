@@ -22,7 +22,7 @@ The interface between the two is the **forecast JSON schema** in `apps/api/READM
 
 | Area | Convention |
 |---|---|
-| Python | 3.12, ruff (format + lint, line length 100), type hints, pydantic v2 schemas, settings via env vars (`app/config.py`) |
+| Python | 3.12, uv (commit `uv.lock`), ruff (format + lint, line length 100), type hints, pydantic v2 schemas, settings via env vars (`app/config.py`) |
 | TypeScript | strict mode, ESLint, API types in `apps/web/lib/api.ts`, no `any` |
 | Time | All timestamps are ISO 8601 with offset, Asia/Bangkok (`+07:00`). 96 points per day, interval-start labelled |
 | Units | Power in kW; energy in kWh (= Σ p50 × 0.25 h) |
@@ -36,7 +36,7 @@ The interface between the two is the **forecast JSON schema** in `apps/api/READM
 3. Make small, focused diffs and avoid unrelated refactors.
 4. Write or update tests first for API behaviour.
 5. Verify before claiming done:
-   - API: `cd apps/api && ruff check . && ruff format --check . && pytest -q`
+   - API: `cd apps/api && uv run ruff check . && uv run ruff format --check . && uv run pytest -q`
    - Web: `cd apps/web && npm run lint && npx tsc --noEmit && npm run build`
 
    Report the real output, and say so if you could not run something.

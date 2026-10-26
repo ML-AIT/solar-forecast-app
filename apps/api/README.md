@@ -21,15 +21,23 @@ tests/               pytest + TestClient
 
 ## Run locally
 
-Requires Python 3.12+.
+Uses [uv](https://docs.astral.sh/uv/getting-started/installation/). uv installs Python 3.12 for you if it is missing.
 
 ```bash
 cd apps/api
-python -m venv .venv
-# Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
-pip install -e ".[dev]"
-uvicorn app.main:app --reload          # http://localhost:8000/docs
+uv sync                                # creates .venv from uv.lock, including dev tools
+uv run uvicorn app.main:app --reload   # http://localhost:8000/docs
 ```
+
+Managing dependencies:
+
+```bash
+uv add <package>             # runtime dependency (updates pyproject.toml and uv.lock)
+uv add --dev <package>       # dev-only tool
+uv lock --upgrade            # bump everything within the allowed ranges
+```
+
+Always commit `uv.lock` together with `pyproject.toml`. CI runs `uv sync --locked`, which fails if they disagree.
 
 With Docker (from the repo root):
 
@@ -42,9 +50,9 @@ docker run --rm -p 8000:8000 solar-api
 ## Test and lint (same commands as CI)
 
 ```bash
-ruff check .
-ruff format --check .      # `ruff format .` to fix
-pytest -q
+uv run ruff check .
+uv run ruff format --check .      # `uv run ruff format .` to fix
+uv run pytest -q
 ```
 
 ## Environment variables

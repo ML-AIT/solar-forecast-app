@@ -1,10 +1,16 @@
 # Solar forecast API — production image (Azure Container Apps / docker compose).
 FROM python:3.12-slim
 
+# Pinned uv binary; keep in step with the version in .github/workflows/ci.yml.
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /bin/uv
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_NO_CACHE=1 \
+    UV_PYTHON_DOWNLOADS=0 \
+    PATH="/srv/.venv/bin:$PATH" \
     PORT=8000
 
 WORKDIR /srv
@@ -13,9 +19,10 @@ WORKDIR /srv
 RUN groupadd --system --gid 10001 app \
     && useradd --system --uid 10001 --gid app --no-create-home app
 
-# Install dependencies first so this layer is cached across code changes.
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Install locked runtime dependencies first so this layer is cached across code changes.
+# The app runs from /srv, so the project itself does not need installing.
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-dev --no-install-project
 
 COPY app ./app
 

@@ -1,4 +1,4 @@
-# Only requirements.txt and app/ are needed in the image.
+# Only pyproject.toml, uv.lock and app/ are needed in the image.
 .venv/
 venv/
 __pycache__/
