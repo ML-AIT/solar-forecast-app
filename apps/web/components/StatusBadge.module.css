@@ -1,0 +1,34 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.symbol {
+  font-size: 11px;
+}
+
+.ok {
+  color: var(--ok);
+  background: rgba(50, 215, 75, 0.12);
+  border: 1px solid rgba(50, 215, 75, 0.24);
+}
+
+.warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+  border: 1px solid rgba(255, 214, 10, 0.25);
+}
+
+.bad {
+  color: var(--bad);
+  background: var(--bad-bg);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+

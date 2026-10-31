@@ -37,6 +37,7 @@ export type Forecast = {
   date: string; // YYYY-MM-DD (local date in Asia/Bangkok)
   issued_at: string;
   model_version: string;
+  forecast_mode?: "primary" | "cached_weather" | "climatology" | "baseline";
   unit: "kW";
   resolution_minutes: number; // 15
   timezone: string; // "Asia/Bangkok"
