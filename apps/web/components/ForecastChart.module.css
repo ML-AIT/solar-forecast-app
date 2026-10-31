@@ -10,7 +10,7 @@
 }
 
 .grid {
-  stroke: var(--grid);
+  stroke: var(--border);
   stroke-width: 1;
 }
 

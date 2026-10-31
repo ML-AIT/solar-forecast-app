@@ -4,19 +4,15 @@ import { useEffect, useState } from "react";
 import {
   API_BASE_URL,
   getForecast,
-  getHealth,
   getPlants,
   type Forecast,
   type Plant,
 } from "@/lib/api";
 import { formatDateTime, formatNumber, tomorrowInBangkok } from "@/lib/format";
 import ForecastChart from "./ForecastChart";
+import Header from "./Header";
 import StatTile from "./StatTile";
 import styles from "./Dashboard.module.css";
-
-type ApiStatus = "checking" | "online" | "offline";
-
-const HEALTH_POLL_MS = 60_000;
 
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
@@ -28,7 +24,6 @@ export default function Dashboard() {
   const [date, setDate] = useState(tomorrowInBangkok);
 
   // ---- Data from the API ----
-  const [apiStatus, setApiStatus] = useState<ApiStatus>("checking");
   const [plants, setPlants] = useState<Plant[] | null>(null);
   const [plantsError, setPlantsError] = useState<string | null>(null);
   // Remember WHICH request a result belongs to, so we can tell when the
@@ -44,18 +39,7 @@ export default function Dashboard() {
   const plant = plants?.find((p) => p.id === plantId);
   const requestKey = `${plantId}|${date}`;
 
-  // 1) API health: check now, then every minute.
-  useEffect(() => {
-    const check = () =>
-      getHealth()
-        .then((h) => setApiStatus(h.status === "ok" ? "online" : "offline"))
-        .catch(() => setApiStatus("offline"));
-    check();
-    const timer = setInterval(check, HEALTH_POLL_MS);
-    return () => clearInterval(timer);
-  }, []);
-
-  // 2) Plant list: load once.
+  // 1) Plant list: load once.
   useEffect(() => {
     getPlants()
       .then(setPlants)
@@ -90,17 +74,8 @@ export default function Dashboard() {
   const peakKw = forecast ? Math.max(...forecast.points.map((p) => p.p50)) : null;
 
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Solar Day-Ahead Forecast</h1>
-          <p className={styles.subtitle}>15-minute PV power forecasts for PEA plants · Asia/Bangkok time</p>
-        </div>
-        <span className={`${styles.status} ${styles[apiStatus]}`} title={API_BASE_URL}>
-          <span className={styles.statusDot} />
-          API {apiStatus}
-        </span>
-      </header>
+    <main className={`app-container ${styles.page}`}>
+      <Header />
 
       {/* ---- Controls ---- */}
       <section className={styles.controls}>

@@ -1,34 +1,22 @@
-/* Colour tokens. Change them here; components only use var(--...). */
+/* Colour tokens from DESIGN.md. Dark only. */
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --border: #e2e5ea;
-  --text: #1a1d23;
-  --muted: #5f6673;
-  --accent: #d97706; /* p50 line (solar amber) */
-  --band: rgba(217, 119, 6, 0.18); /* p10–p90 band */
-  --grid: #e9ecf0;
-  --ok: #15803d;
-  --bad: #b91c1c;
-  --warn: #a16207;
-  color-scheme: light;
-}
+  --bg: #121212;
+  --surface: #1E1E1E;
+  --surface-hover: #252525;
+  --border: #2C2C2E;
+  --text: #FFFFFF;
+  --muted: #98989D;
+  --accent: #00E5FF;
+  --band: rgba(0, 229, 255, 0.16);
+  --ok: #32D74B;
+  --warn: #FFD60A;
+  --bad: #FF453A;
+  --bad-bg: #3A1C1C;
+  --warn-bg: rgba(255, 214, 10, 0.10);
+  --on-accent: #121212;
+  --accent-fade: rgba(0, 229, 255, 0);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1115;
-    --surface: #181b21;
-    --border: #2a2f38;
-    --text: #e8eaed;
-    --muted: #9aa1ad;
-    --accent: #f59e0b;
-    --band: rgba(245, 158, 11, 0.22);
-    --grid: #262a32;
-    --ok: #4ade80;
-    --bad: #f87171;
-    --warn: #facc15;
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 * {
@@ -39,16 +27,34 @@ html,
 body {
   margin: 0;
   padding: 0;
-}
-
-body {
   background: var(--bg);
   color: var(--text);
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   line-height: 1.5;
+}
+
+/* App container */
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 0 16px;
+  }
+}
+
+/* 12-column grid layout */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .grid-12 {
+    gap: 16px;
+  }
 }
