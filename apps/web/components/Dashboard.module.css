@@ -1,7 +1,5 @@
 .page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding-bottom: 48px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -86,46 +84,59 @@
 /* ---- Tiles ---- */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .tiles {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .tile {
-  padding: 16px;
+  padding: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .tileLabel {
-  font-size: 0.85rem;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .tileValue {
-  margin-top: 4px;
-  font-size: 1.8rem;
-  font-weight: 600;
+  margin-top: 8px;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 32px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  color: var(--text);
 }
 
 .tileUnit {
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 400;
   color: var(--muted);
 }
 
 /* ---- Chart card ---- */
 .card {
-  padding: 16px;
+  padding: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .cardTitle {
-  margin: 0 0 12px;
-  font-size: 1.05rem;
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 /* ---- Metadata + messages ---- */

@@ -7,12 +7,22 @@ export const API_BASE_URL = (
 
 // ---------- Types ----------
 
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 export type Plant = {
   id: string; // e.g. "S01"
   name: string; // e.g. "S01 Sa Kaeo"
   capacity_kw: number;
-  lat: number;
-  lon: number;
+  lat: number | null;
+  lon: number | null;
 };
 
 export type ForecastPoint = {
@@ -53,7 +63,7 @@ async function getJson<T>(path: string): Promise<T> {
     } catch {
       // response was not JSON — keep statusText
     }
-    throw new Error(`API ${res.status}: ${detail}`);
+    throw new ApiError(res.status, `API ${res.status}: ${detail}`);
   }
   return (await res.json()) as T;
 }
