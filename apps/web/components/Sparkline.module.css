@@ -1,0 +1,13 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: 56px;
+  overflow: visible;
+}
+
+.empty {
+  width: 100%;
+  border-bottom: 1px dashed var(--border);
+  opacity: 0.5;
+}
+
