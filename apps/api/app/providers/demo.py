@@ -94,5 +94,6 @@ class DemoForecastProvider:
             date=date,
             issued_at=issued_at,
             model_version=MODEL_VERSION,
+            forecast_mode="primary",
             points=points,
         )

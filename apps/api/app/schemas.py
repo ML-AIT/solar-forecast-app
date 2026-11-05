@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field, model_validator
 
 INTERVALS_PER_DAY = 96  # 24 h x 4 (15-min resolution)
 
+ForecastMode = Literal["primary", "cached_weather", "climatology", "baseline"]
+
 
 class Plant(BaseModel):
     id: str = Field(examples=["S01"])
@@ -34,6 +36,10 @@ class Forecast(BaseModel):
     date: dt.date
     issued_at: dt.datetime
     model_version: str
+    forecast_mode: ForecastMode = Field(
+        default="primary",
+        description="primary = the model selected for this plant; anything else is a fallback.",
+    )
     unit: Literal["kW"] = "kW"
     resolution_minutes: Literal[15] = 15
     timezone: Literal["Asia/Bangkok"] = "Asia/Bangkok"

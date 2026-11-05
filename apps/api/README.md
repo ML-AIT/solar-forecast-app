@@ -98,6 +98,7 @@ S03/S04 coordinates are TBD. Update `app/plants.py` once PEA confirms them.
   "date": "2026-10-17",
   "issued_at": "2026-10-16T23:55:00+07:00",
   "model_version": "demo-0.1",
+  "forecast_mode": "primary",
   "unit": "kW",
   "resolution_minutes": 15,
   "timezone": "Asia/Bangkok",
@@ -134,6 +135,16 @@ and returns 500 if they fail):
 - `issued_at` is when the model ran (ISO 8601 with `+07:00`). It must be at or before the forecast's issue
   deadline on D-1.
 - `model_version` identifies the model, e.g. `lgbm-nwp-2026.10.1`. It is shown in the dashboard.
+- `forecast_mode` says how the forecast was made. Optional in the file; a missing value is served as `primary`.
+
+  | Value | Meaning |
+  |---|---|
+  | `primary` | The model selected for this plant, using a fresh weather forecast |
+  | `cached_weather` | The selected model, using the last weather forecast fetched before the cutoff |
+  | `climatology` | Training-only monthly time-slot climatology, because no weather forecast was available |
+  | `baseline` | Another baseline, because the selected model could not run |
+
+  Anything other than `primary` shows the fallback badge in the dashboard. Any other value is rejected (500).
 - `unit` = `"kW"`, `resolution_minutes` = `15`, `timezone` = `"Asia/Bangkok"`.
 
 Write each file atomically: write `2026-10-17.json.tmp`, then rename it. This way the API never reads a half-written
