@@ -1,7 +1,7 @@
 # Solar Forecast API (`apps/api`)
 
 FastAPI service that serves **day-ahead, 15-minute PV power forecasts (P10/P50/P90, kW)** for the four
-PEA plants. It does **not** train or run the ML model. The model runs as a batch job in the ML repo and writes JSON
+PEA plants. It does **not** train or run the ML model. The model runs as a daily batch job (`apps/forecast-job`) and writes JSON
 files, which this API reads and serves. Until those files exist, the `demo` provider returns a synthetic curve
 (a clear-sky-shaped curve with seeded random clouds). It uses no real plant data.
 

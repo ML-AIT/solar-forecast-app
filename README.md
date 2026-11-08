@@ -8,10 +8,11 @@ deployed on **Azure** with **GitHub Actions** CI/CD. The ML model is trained in 
 solar-forecast-app/
 ├── apps/
 │   ├── api/            FastAPI service (Python 3.12, Docker)   → Azure Container Apps
+│   ├── forecast-job/   daily forecast job (Python 3.12, Docker) → Azure Container Apps Job
 │   └── web/            Next.js dashboard (static export)       → Azure Static Web Apps  (design: DESIGN.md)
 ├── infra/azure/        one-time Azure setup commands
 ├── docs/               architecture.md (stack decision) · frontend-requirements.md (dashboard brief)
-├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml
+├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml · deploy-job.yml
 ├── docker-compose.yml  run both locally
 ├── AGENTS.md           rules for contributors & AI agents
 └── CLAUDE.md
@@ -29,7 +30,7 @@ cd apps/web && npm ci && npm run dev
 ```
 
 The API starts in **demo mode** (`FORECAST_PROVIDER=demo`). It returns synthetic clear-sky-shaped forecasts, so
-the app works without any real data. Set `FORECAST_PROVIDER=file` to serve JSON written by the ML job.
+the app works without any real data. Set `FORECAST_PROVIDER=file` to serve JSON written by the forecast job (`apps/forecast-job`).
 
 ## API
 
@@ -45,12 +46,12 @@ Interactive docs are at `/docs`.
 
 - **CI** (`ci.yml`) runs on every PR and on `main`:
   - API: ruff, pytest and a Docker build.
+  - Forecast job: ruff check, pytest and a Docker build.
   - Web: lint, typecheck and build.
 - **Deploy** runs on merge to `main`, once Azure is configured (see [infra/azure/README.md](infra/azure/README.md)):
   - `deploy-api.yml`: build the image → Azure Container Registry → Container App → smoke test.
   - `deploy-web.yml`: static build → Static Web App.
+  - `deploy-job.yml`: after CI passes, and only when `apps/forecast-job/` changed: build the image → ACR → Container
+    Apps Job. See [apps/forecast-job/README.md](apps/forecast-job/README.md).
 
-## Working agreement
 
-Branch per task, then a PR with one review and green CI before merging. Never commit secrets or real plant data.
-See [AGENTS.md](AGENTS.md).

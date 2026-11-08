@@ -8,7 +8,7 @@ Target: **Azure for Students** subscription ($100 credit, no card). Expected cos
 GitHub Actions ──OIDC──► Azure
    deploy-api.yml ──► ACR (solar-api image) ──► Container App  "solar-api"   (FastAPI, scale 0–1)
    deploy-web.yml ──────────────────────────► Static Web App  "solar-web"   (Next.js static export)
-   (later, ML repo) ─► ACR (solar-ml image)  ──► Container Apps JOB "solar-forecast-daily" (cron)
+   deploy-job.yml ──► ACR (solar-forecast-job) ► Container Apps JOB "solar-forecast-daily" (cron)
                                                      └─ writes forecast JSON → Azure Files/Blob → read by API (FORECAST_PROVIDER=file)
 ```
 
@@ -93,18 +93,19 @@ gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN -R $GH_REPO
 
 Then update the API's `ALLOWED_ORIGINS` to the Static Web App URL and push to `main` (or run the workflows manually).
 
-## 5. Later: daily forecast job (from the ML repo)
+## 5. Daily forecast job (`apps/forecast-job`)
 
 ```bash
-# 04:00 UTC = 11:00 ICT, before the 12:00 D-1 deadline
+# 16:00 UTC = 23:00 ICT, before the 23:55 D-1 cutoff
 az containerapp job create -g $RG -n solar-forecast-daily --environment $ENV \
-  --trigger-type Schedule --cron-expression "0 4 * * *" \
-  --image $ACR.azurecr.io/solar-ml:latest --registry-server $ACR.azurecr.io --registry-identity system \
+  --trigger-type Schedule --cron-expression "0 16 * * *" \
+  --image $ACR.azurecr.io/solar-forecast-job:latest --registry-server $ACR.azurecr.io --registry-identity system \
   --cpu 1 --memory 2Gi --replica-timeout 1800
 ```
 
 The job writes `forecasts/{plant_id}/{YYYY-MM-DD}.json` (schema in `apps/api/README.md`) to an Azure Files share
-mounted into both the job and the API; set the API to `FORECAST_PROVIDER=file`.
+mounted into both the job and the API; set the API to `FORECAST_PROVIDER=file`. The mounts, shares and
+`deploy-job.yml` settings (`DEPLOY_JOB=true`, `FORECAST_JOB_NAME`) are in `apps/forecast-job/README.md`.
 
 ## 6. Clean up
 

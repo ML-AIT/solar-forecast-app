@@ -1,0 +1,83 @@
+name: Deploy forecast job (Azure Container Apps Job)
+
+# Runs after CI passes on main, so a failing test never reaches the daily job.
+# Disabled until the repository variable DEPLOY_JOB=true. Setup: apps/forecast-job/README.md.
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # OIDC login to Azure (no stored passwords)
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      vars.DEPLOY_JOB == 'true' && (github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+          fetch-depth: 0   # full history, to compare with the commit of the running image
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # CI runs on every push to main, but most pushes do not touch the job; rebuilding the image for
+      # each would fill the registry. The image tag is the commit it was built from. A tag that is
+      # not a commit in this repo, or a manual run, always deploys.
+      - name: Check whether the job changed
+        id: changed
+        run: |
+          RUNNING=$(az containerapp job show \
+            --name "${{ vars.FORECAST_JOB_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --query "properties.template.containers[0].image" -o tsv)
+          echo "running image: $RUNNING"
+          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ] && \
+             git diff --quiet "${RUNNING##*:}" "$SHA" -- apps/forecast-job .github/workflows/deploy-job.yml 2>/dev/null; then
+            echo "No job changes since the running image; skipping the deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push image to ACR
+        if: steps.changed.outputs.deploy == 'true'
+        run: |
+          az acr login --name "${{ vars.ACR_NAME }}"
+          IMAGE="${{ vars.ACR_NAME }}.azurecr.io/solar-forecast-job:$SHA"
+          docker build -t "$IMAGE" apps/forecast-job
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Update the job
+        if: steps.changed.outputs.deploy == 'true'
+        run: |
+          az containerapp job update \
+            --name "${{ vars.FORECAST_JOB_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --image "$IMAGE"
+
+      - name: Check the job kept its image and mounts
+        if: steps.changed.outputs.deploy == 'true'
+        run: |
+          az containerapp job show \
+            --name "${{ vars.FORECAST_JOB_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --query "{image: properties.template.containers[0].image, mounts: properties.template.containers[0].volumeMounts[].mountPath}" \
+            -o json | tee job.json
+          grep -q "$SHA" job.json
+          grep -q '"/models"' job.json
+          grep -q '"/forecasts"' job.json
