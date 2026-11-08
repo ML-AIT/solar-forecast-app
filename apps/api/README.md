@@ -144,7 +144,7 @@ and returns 500 if they fail):
   | `climatology` | Training-only monthly time-slot climatology, because no weather forecast was available |
   | `baseline` | Another baseline, because the selected model could not run |
 
-  Anything other than `primary` shows the fallback badge in the dashboard. Any other value is rejected (500).
+  Anything other than `primary` shows a fallback badge in the dashboard that names the mode ("Fallback: climatology"). Any other value is rejected (500).
 - `unit` = `"kW"`, `resolution_minutes` = `15`, `timezone` = `"Asia/Bangkok"`.
 
 Write each file atomically: write `2026-10-17.json.tmp`, then rename it. This way the API never reads a half-written

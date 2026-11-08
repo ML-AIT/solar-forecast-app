@@ -4,6 +4,8 @@ export type StatusType = "ready" | "stale" | "fallback" | "missing" | "error";
 
 type StatusBadgeProps = {
   status: StatusType;
+  /** Replaces the default label, e.g. to name the fallback mode. */
+  label?: string;
 };
 
 export const STATUS_CONFIG: Record<
@@ -17,7 +19,7 @@ export const STATUS_CONFIG: Record<
   error: { label: "Error", symbol: "✖", variant: "bad" },
 };
 
-export default function StatusBadge({ status }: StatusBadgeProps) {
+export default function StatusBadge({ status, label }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.error;
 
   return (
@@ -25,7 +27,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
       <span className={styles.symbol} aria-hidden="true">
         {config.symbol}
       </span>
-      <span>{config.label}</span>
+      <span>{label ?? config.label}</span>
     </span>
   );
 }
