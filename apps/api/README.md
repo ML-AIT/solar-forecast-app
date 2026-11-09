@@ -99,6 +99,7 @@ S03/S04 coordinates are TBD. Update `app/plants.py` once PEA confirms them.
   "issued_at": "2026-10-16T23:55:00+07:00",
   "model_version": "demo-0.1",
   "forecast_mode": "primary",
+  "issue_scenario": "d1_2355",
   "unit": "kW",
   "resolution_minutes": 15,
   "timezone": "Asia/Bangkok",
@@ -145,6 +146,16 @@ and returns 500 if they fail):
   | `baseline` | Another baseline, because the selected model could not run |
 
   Anything other than `primary` shows a fallback badge in the dashboard that names the mode ("Fallback: climatology"). Any other value is rejected (500).
+- `issue_scenario` says which issue time the forecast was made for. Optional in the file; a missing value is served as
+  `null`. Any other value is rejected (500).
+
+  | Value | Meaning |
+  |---|---|
+  | `d1_2355` | Issued at 23:55 the day before (the final forecast the daily job writes) |
+  | `d1_1000` | Issued at 10:00 the day before |
+  | `d1_1000_morning` | Issued at 10:00 the day before, with that morning's measurements |
+  | `d2_2355` | Issued at 23:55 two days before (the early version, replaced by the final one the next night) |
+
 - `unit` = `"kW"`, `resolution_minutes` = `15`, `timezone` = `"Asia/Bangkok"`.
 
 Write each file atomically: write `2026-10-17.json.tmp`, then rename it. This way the API never reads a half-written

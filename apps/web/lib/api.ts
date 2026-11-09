@@ -38,6 +38,7 @@ export type Forecast = {
   issued_at: string;
   model_version: string;
   forecast_mode?: "primary" | "cached_weather" | "climatology" | "baseline";
+  issue_scenario?: "d1_2355" | "d1_1000" | "d1_1000_morning" | "d2_2355" | null;
   unit: "kW";
   resolution_minutes: number; // 15
   timezone: string; // "Asia/Bangkok"

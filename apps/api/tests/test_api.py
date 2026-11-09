@@ -42,6 +42,7 @@ def test_forecast_shape_and_bounds(client: TestClient, plant_id: str) -> None:
     assert body["timezone"] == "Asia/Bangkok"
     assert body["model_version"] == "demo-0.1"
     assert body["forecast_mode"] == "primary"
+    assert body["issue_scenario"] == "d1_2355"
     assert body["issued_at"].endswith("+07:00")
 
     points = body["points"]

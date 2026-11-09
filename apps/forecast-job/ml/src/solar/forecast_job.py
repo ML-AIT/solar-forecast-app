@@ -18,8 +18,8 @@ D-2 23:55 (an early version), so the dashboard always has tomorrow. One fetch pe
 
 A rerun for the same day never makes the forecast worse: it replaces the file only with a better
 mode, or the same mode from a later cutoff (the final replacing the early version), and leaves a
-`primary` file alone otherwise, unless forced. The file records its `issue_scenario`, a field the API
-ignores. The summary logs what it did (proposal §3.3).
+`primary` file alone otherwise, unless forced. The file records its `issue_scenario`, which the API
+serves. The summary logs what it did (proposal §3.3).
 
 The issue time is one setting, `scenario`. Each model file holds a P10/P90 band per issue time, so
 switching needs no rebuild: only the job's schedule has to move with it.

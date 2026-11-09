@@ -90,3 +90,28 @@ def test_unknown_mode_500(file_client: TestClient, tmp_path: Path) -> None:
 
     r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
     assert r.status_code == 500
+
+
+def test_issue_scenario_is_served(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "issue_scenario": "d2_2355"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["issue_scenario"] == "d2_2355"
+
+
+def test_file_without_issue_scenario_is_served(file_client: TestClient, tmp_path: Path) -> None:
+    payload = _demo_payload()
+    del payload["issue_scenario"]
+    _write_payload(tmp_path, payload)
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["issue_scenario"] is None
+
+
+def test_unknown_issue_scenario_500(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "issue_scenario": "d0_1200"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 500
