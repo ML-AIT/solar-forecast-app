@@ -37,7 +37,7 @@ Define these once as CSS variables in `app/globals.css`. Components use only `va
 | `--muted` | `#98989D` | `#586273` | Labels, axis text, secondary info |
 | `--accent` | `#00E5FF` | `#007C94` | **Forecast data**: P50 line, sparklines, main KPI, primary buttons, focus ring |
 | `--band` | `rgba(0, 229, 255, 0.16)` | `rgba(0, 124, 148, 0.14)` | P10–P90 uncertainty band |
-| `--ok` | `#32D74B` | `#1B7F3A` | Status: API online, forecast available, primary model |
+| `--ok` | `#32D74B` | `#16733A` | Status: API online, forecast available, primary model |
 | `--warn` | `#FFD60A` | `#946200` | Status: fallback model, stale forecast, partial data *(added, not in original)* |
 | `--bad` | `#FF453A` | `#C8302B` | Status: API offline, forecast missing, error |
 | `--ok-bg`, `--ok-border` | green at 12 % / 24 % | green at 10 % / 28 % | "Ready" badge |
@@ -50,7 +50,8 @@ Define these once as CSS variables in `app/globals.css`. Components use only `va
 | `--map-night`, `--map-day`, `--map-dawn` | dark navy / teal / brown | grey-blue / pale blue / peach | Station map sky for the day replay |
 | `--map-veil`, `--sunlight` | black / `#FFC24D` | navy / `#FFB020` | Night darkening and sunlight tint on the map |
 
-The light values keep at least 4.5:1 contrast on `--surface` for text and status colours (yellow becomes amber).
+The light values keep at least 4.5:1 contrast for text and status colours on `--surface`, including on the badge and
+alert tints (yellow becomes amber).
 
 Rules:
 
@@ -61,7 +62,7 @@ Rules:
   to `var(--border)` in the same PR.
 - Status colours (`--ok`, `--warn`, `--bad`) mean **status only**. Never use them to decorate a chart.
 - Never show a status by colour alone. Always pair it with a text label or an icon, such as "● Online" or "⚠ Fallback".
-- Do not use pastel colours. In light mode, white is for cards only; the page background is `--bg`.
+- Do not use pastel colours, except the light map sky tints (`--map-*`). In light mode, white is for cards only; the page background is `--bg`.
 
 ## 3. Typography
 
@@ -99,7 +100,7 @@ Units sit after the number, smaller and `--muted`: **4,812** <small>kWh</small>.
   The map shows one 15-minute slot at a time (the fleet peak until someone picks a time): a clock in the corner, the
   sky tinted from `--map-night` through `--map-dawn` to `--map-day`, and an `--accent` glow under each marker whose
   area grows with P50 ÷ capacity. Each marker also shows its P50 at that time. Play steps one slot every 110 ms from
-  just before sunrise to just after sunset. The glow is `--accent`, never a status colour. The slider is a native
+  just before the first forecast power to just after the last. The glow is `--accent`, never a status colour. The slider is a native
   range input with an `aria-valuetext` of the time and fleet P50, and `prefers-reduced-motion` turns the transitions off.
 - **Tables**: rows have `border-bottom: 1px solid var(--border)`, and a hovered row uses `--surface-hover`. Numbers
   are right-aligned.

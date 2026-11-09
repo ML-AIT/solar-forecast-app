@@ -27,6 +27,7 @@ type StationMapProps = {
 // Reference point so the map is easy to read at a glance.
 const BANGKOK = projectToMap(100.5018, 13.7563);
 
+// Slots are forecast point indices: the API contract guarantees 96 points from 00:00.
 // One 15-minute slot per step: sunrise to sunset plays in about 6 seconds.
 const STEP_MS = 110;
 
@@ -295,7 +296,7 @@ function DayTimeline({
           type="button"
           className={styles.playButton}
           onClick={onTogglePlay}
-          aria-label={playing ? "Pause day replay" : "Play tomorrow's forecast through the day"}
+          aria-label={playing ? "Pause" : "Play the day: tomorrow's forecast"}
         >
           {playing ? (
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">

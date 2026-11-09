@@ -122,6 +122,10 @@
 .cityLabel {
   fill: var(--muted);
   font-size: 12px;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 
 /* ---- Markers ---- */
