@@ -42,12 +42,15 @@ export default function DataTable({ points }: DataTableProps) {
 
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
+              <caption className="sr-only">
+                15-minute interval power forecast values (P10, P50, and P90)
+              </caption>
               <thead>
                 <tr>
-                  <th className={styles.th}>Time</th>
-                  <th className={`${styles.th} ${styles.thRight}`}>P10 (kW)</th>
-                  <th className={`${styles.th} ${styles.thRight}`}>P50 (kW)</th>
-                  <th className={`${styles.th} ${styles.thRight}`}>P90 (kW)</th>
+                  <th scope="col" className={styles.th}>Time</th>
+                  <th scope="col" className={`${styles.th} ${styles.thRight}`}>P10 (kW)</th>
+                  <th scope="col" className={`${styles.th} ${styles.thRight}`}>P50 (kW)</th>
+                  <th scope="col" className={`${styles.th} ${styles.thRight}`}>P90 (kW)</th>
                 </tr>
               </thead>
               <tbody>

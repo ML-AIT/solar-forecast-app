@@ -51,7 +51,11 @@ export default function StationHeader({
           >
             ◀
           </button>
+          <label htmlFor="forecast-date-input" className="sr-only">
+            Forecast date
+          </label>
           <input
+            id="forecast-date-input"
             type="date"
             className={styles.dateInput}
             value={date}
