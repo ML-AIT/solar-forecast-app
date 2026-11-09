@@ -77,6 +77,12 @@ Units sit after the number, smaller and `--muted`: **4,812** <small>kWh</small>.
   a `--band` area with no outline. No thick borders around the plot. Use an area style for the
   P50 sparkline on station cards (`--accent` to `--accent-fade` gradient). The hover readout shows time and P10/P50/P90
   in the Data font.
+- **Station map** (overview page): hand-written SVG, no map library or tiles. Land is `--surface-hover` with a muted
+  outline, neighbouring countries `--surface`, sea `--bg`. A marker is a status-coloured dot with a halo and a
+  monospace label plus the status symbol (`S01 ⚠`), so the status never relies on colour alone. Hover or keyboard
+  focus gives the marker an `--accent` ring, highlights the matching station card (and the reverse), and shows a
+  tooltip card. Every marker is a link to the station page. Plants with no coordinates are listed under the map,
+  never placed at a guessed position.
 - **Tables**: rows have `border-bottom: 1px solid var(--border)`, and a hovered row uses `--surface-hover`. Numbers
   are right-aligned.
 - **Alerts**: `background: var(--bad-bg)`, `color: var(--bad)`, `border-left: 4px solid var(--bad)`,
@@ -91,8 +97,9 @@ Units sit after the number, smaller and `--muted`: **4,812** <small>kWh</small>.
 
 - **Grid:** 12 columns, with a 24 px gutter on desktop and 16 px on mobile. Max content width is 1280 px, centred.
 - **Spacing:** multiples of 8 px only (8, 16, 24, 32, 48).
-- **Overview page (`/`)**: a KPI row of 3 tiles × 4 columns, then the station cards. Show 4 cards per row (3 columns
-  each) at 1280 px or wider, 2 per row on tablets, and 1 per row on phones.
+- **Overview page (`/`)**: a KPI row of 3 tiles × 4 columns. Below it, the station cards span **8 columns** (2 per
+  row) and the **station map** spans **4 columns** on the right. Below 1024 px the map stacks under the cards; on
+  phones the cards are 1 per row.
 - **Station page (`/station/?id=S01`)**: a KPI row of 3 tiles × 4 columns. Below it, the main chart spans
   **8 columns** and the status/alerts panel spans **4 columns** on the right. Below 1024 px, the panel stacks under
   the chart. The data table spans all 12 columns at the bottom.

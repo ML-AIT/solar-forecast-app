@@ -30,28 +30,58 @@
   line-height: 1.2;
 }
 
-.stationsSection {
+/* Cards take 8 of 12 columns, the map the right 4. Below 1024 px the map stacks under the cards. */
+.body {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
   margin-top: 8px;
+  align-items: start;
 }
 
-/* 4 cards per row at >=1280px (3 cols each), 2 per row on tablets, 1 on phones */
+.stationsSection {
+  grid-column: span 8;
+  min-width: 0;
+}
+
+.mapColumn {
+  grid-column: span 4;
+  min-width: 0;
+  position: sticky;
+  top: 24px;
+}
+
+/* 2 cards per row next to the map, 1 per row on phones */
 .gridCards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 1023px) {
+  .body {
+    gap: 16px;
+  }
+
+  .stationsSection,
+  .mapColumn {
+    grid-column: 1 / -1;
+  }
+
+  .mapColumn {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
   .gridCards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
   }
 }
 
 @media (max-width: 680px) {
   .gridCards {
     grid-template-columns: 1fr;
-    gap: 16px;
   }
 }
 

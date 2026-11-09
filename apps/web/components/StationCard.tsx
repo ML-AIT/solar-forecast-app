@@ -20,7 +20,20 @@ export type PlantForecastState = {
 
 type StationCardProps = {
   state: PlantForecastState;
+  /** True while the matching map marker is hovered or focused. */
+  highlighted?: boolean;
+  onHighlight?: (plantId: string | null) => void;
 };
+
+/** P50 energy and peak as display strings ("–" when there is no forecast). */
+export function summarizeForecast(forecast: Forecast | undefined): { energy: string; peak: string } {
+  if (!forecast || forecast.points.length === 0) return { energy: "–", peak: "–" };
+  const hours = (forecast.resolution_minutes ?? 15) / 60;
+  const totalKwh = forecast.points.reduce((sum, p) => sum + p.p50, 0) * hours;
+  const e = formatEnergy(totalKwh);
+  const peakKw = Math.max(...forecast.points.map((p) => p.p50));
+  return { energy: `${e.value} ${e.unit}`, peak: `${formatNumber(peakKw)} kW` };
+}
 
 export function getStationStatus(state: PlantForecastState): StatusType {
   const { forecast, error, statusCode } = state;
@@ -41,25 +54,15 @@ export function getStationStatus(state: PlantForecastState): StatusType {
   return "ready";
 }
 
-export default function StationCard({ state }: StationCardProps) {
+export default function StationCard({ state, highlighted = false, onHighlight }: StationCardProps) {
   const { plant, forecast } = state;
   const status = getStationStatus(state);
+  const { energy: energyStr, peak: peakStr } = summarizeForecast(forecast);
 
-  // Energy & Peak calculation
-  let energyStr = "–";
-  let peakStr = "–";
   let sparklineData: number[] = [];
   let ageOrTime = "";
 
   if (forecast && forecast.points.length > 0) {
-    const hours = (forecast.resolution_minutes ?? 15) / 60;
-    const totalKwh = forecast.points.reduce((sum, p) => sum + p.p50, 0) * hours;
-    const formattedEnergy = formatEnergy(totalKwh);
-    energyStr = `${formattedEnergy.value} ${formattedEnergy.unit}`;
-
-    const peakKw = Math.max(...forecast.points.map((p) => p.p50));
-    peakStr = `${formatNumber(peakKw)} kW`;
-
     sparklineData = forecast.points.map((p) => p.p50);
 
     const age = formatForecastAge(forecast.issued_at);
@@ -73,7 +76,11 @@ export default function StationCard({ state }: StationCardProps) {
   return (
     <Link
       href={`/station/?id=${encodeURIComponent(plant.id)}`}
-      className={styles.card}
+      className={`${styles.card} ${highlighted ? styles.highlighted : ""}`}
+      onMouseEnter={onHighlight ? () => onHighlight(plant.id) : undefined}
+      onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
+      onFocus={onHighlight ? () => onHighlight(plant.id) : undefined}
+      onBlur={onHighlight ? () => onHighlight(null) : undefined}
       aria-label={`${plant.name} (${plant.id}): status ${status}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
     >
       <div className={styles.topRow}>

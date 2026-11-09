@@ -110,7 +110,8 @@ forecast JSON has no field for it. Plan:
   measurements are confidential, so they must not appear on a public page. Accuracy is reported from the ML repo's
   local replay. If PEA later allows a data feed, this becomes a separate decision record.
 - Login, user accounts, databases, Next.js server features (see `docs/architecture.md`).
-- A map of plants (S03/S04 coordinates are not confirmed yet). This is a nice-to-have once they are.
+- ~~A map of plants~~ Added to the overview page as a station map. S03/S04 show under "Location not confirmed" until
+  PEA confirms their coordinates; adding `lat`/`lon` in `apps/api/app/plants.py` places them automatically.
 - Light mode, translations (Thai UI), cost in THB.
 
 ## 6. Tickets

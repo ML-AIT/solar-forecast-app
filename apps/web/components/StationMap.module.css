@@ -1,0 +1,273 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Map ---- */
+
+.mapWrap {
+  position: relative;
+  border-radius: 8px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 640px;
+}
+
+@media (max-width: 1023px) {
+  .svg {
+    max-height: 480px;
+  }
+}
+
+.neighbours {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.country {
+  fill: var(--surface-hover);
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-opacity: 0.6;
+  stroke-linejoin: round;
+}
+
+.city {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+
+.cityLabel {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+/* ---- Markers ---- */
+
+.marker {
+  cursor: pointer;
+  outline: none;
+}
+
+.hit {
+  fill: transparent;
+}
+
+.halo {
+  fill: currentColor;
+  fill-opacity: 0.18;
+  stroke: currentColor;
+  stroke-opacity: 0.5;
+  stroke-width: 1;
+  transition: r 150ms ease;
+}
+
+.dot {
+  fill: currentColor;
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.markerLabel {
+  fill: var(--text);
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.markerSymbol {
+  fill: currentColor;
+}
+
+.marker.active .halo,
+.marker:focus-visible .halo {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 2;
+}
+
+.ok {
+  color: var(--ok);
+}
+
+.warn {
+  color: var(--warn);
+}
+
+.bad {
+  color: var(--bad);
+}
+
+/* ---- Tooltip ---- */
+
+.tooltip {
+  position: absolute;
+  transform: translate(-16px, calc(-100% - 20px));
+  min-width: 200px;
+  max-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1;
+}
+
+.tooltipRight {
+  transform: translate(calc(-100% + 16px), calc(-100% - 20px));
+}
+
+.tooltipHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.tooltipName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tooltipStats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltipStats > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.tooltipStats dt {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tooltipStats dd {
+  margin: 0;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tooltipHint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---- Legend ---- */
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 12px;
+}
+
+/* ---- Stations without coordinates ---- */
+
+.unplaced {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unplacedTitle {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.unplacedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unplacedLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.unplacedLink:hover,
+.unplacedActive {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.unplacedName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
