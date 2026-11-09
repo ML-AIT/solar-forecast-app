@@ -267,10 +267,12 @@ def live_section(liv: list[dict]) -> list[str]:
 def summary(args: argparse.Namespace) -> None:
     rep, liv = read_csv(args.out / "replay_runs.csv"), read_csv(args.out / "live_runs.csv")
     lines = ["# Forecast job: operation check", "",
-             ("The proposal's prototype-operation criteria (§1.3), measured on a replay of past "
-             "days and on the live nightly runs. Made by "
-             "`apps/forecast-job/ml/scripts/replay_forecast_job.py`; see its docstring for how "
-             "it works and how to rerun it."), ""]
+             ("The Phase 1 proposal's prototype-operation and timeliness criteria (§1.3), "
+              "measured on a replay of past days and on the live nightly runs. The proposal "
+              "asked for four plants; the final scope is S01 and S02 (ML repo "
+              "`docs/decisions/0005-final-scope-s01-s02.md`), so both parts cover those two. "
+              "Made by `apps/forecast-job/ml/scripts/replay_forecast_job.py`; see its docstring "
+              "for how it works and how to rerun it."), ""]
     if rep:
         lines += replay_section(rep)
     if liv:
