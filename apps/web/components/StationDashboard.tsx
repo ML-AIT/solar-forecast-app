@@ -222,12 +222,14 @@ export default function StationDashboard() {
         </div>
 
         {/* 4-col Status & Alerts Panel (S5, S6) */}
-        <StatusPanel
-          plant={plant}
-          forecast={forecast}
-          isNotFound={isForecastNotFound}
-          error={forecastError}
-        />
+        <div className={styles.sideColumn}>
+          <StatusPanel
+            plant={plant}
+            forecast={forecast}
+            isNotFound={isForecastNotFound}
+            error={forecastError}
+          />
+        </div>
       </section>
 
       {/* S7: 96-row collapsible data table spanning 12 columns */}

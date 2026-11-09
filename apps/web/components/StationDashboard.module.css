@@ -65,7 +65,7 @@
   text-align: center;
   gap: 12px;
   padding: 32px 16px;
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--inset);
   border: 1px dashed var(--border);
   border-radius: 12px;
 }

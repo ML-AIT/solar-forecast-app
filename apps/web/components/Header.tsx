@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL, getHealth } from "@/lib/api";
+import ThemeToggle from "./ThemeToggle";
 import styles from "./Header.module.css";
 
 type ApiStatus = "checking" | "online" | "offline";
@@ -49,14 +50,17 @@ export default function Header({ subtitle }: HeaderProps) {
           {subtitle ?? "15-minute PV power forecasts for PEA plants"} · All times Asia/Bangkok (UTC+7)
         </p>
       </div>
-      <div
-        className={`${styles.statusPill} ${styles[apiStatus]}`}
-        title={`API endpoint: ${API_BASE_URL}`}
-        role="status"
-        aria-live="polite"
-      >
-        <span className={styles.statusDot} aria-hidden="true" />
-        <span>{statusLabel}</span>
+      <div className={styles.actions}>
+        <ThemeToggle />
+        <div
+          className={`${styles.statusPill} ${styles[apiStatus]}`}
+          title={`API endpoint: ${API_BASE_URL}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className={styles.statusDot} aria-hidden="true" />
+          <span>{statusLabel}</span>
+        </div>
       </div>
     </header>
   );

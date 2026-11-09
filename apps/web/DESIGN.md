@@ -15,41 +15,54 @@ The UI should feel **technically reliable** and **in control**, like a simplifie
 operators. It should not feel like a social app or a game. The main targets are a laptop (1280 px or wider) and a
 tablet (768 px or wider). Phone width must still work, but it is not the main target.
 
-- **Dark only.** We do not follow the OS light mode. Long data-reading sessions are easier on a dark background.
+- **Dark by default, light on request.** The header toggle cycles **Auto** (follows the OS) → **Light** → **Dark**,
+  and the choice is saved in the browser (`lib/theme.ts`). A script in `<head>` applies it before the first paint,
+  so a saved theme never flashes the other one.
 - Data is the hero. Chrome (headers, borders, labels) stays quiet and grey. Colour is for data and for status.
 - No decorative imagery, gradients behind text, or animations beyond short hover and fade transitions (150 ms or less).
+  The one exception is the station map's day replay (§4): it only moves when someone presses play or drags the
+  slider, and it shows forecast data, not decoration.
 
 ## 2. Colour palette
 
 Define these once as CSS variables in `app/globals.css`. Components use only `var(--…)` and never hex codes.
 
-| Token | Hex | Use |
-|---|---|---|
-| `--bg` | `#121212` | Page background |
-| `--surface` | `#1E1E1E` | Cards, panels, tiles |
-| `--surface-hover` | `#252525` | Row or card hover |
-| `--border` | `#2C2C2E` | Card borders, table row lines, chart grid lines |
-| `--text` | `#FFFFFF` | Main text, KPI numbers |
-| `--muted` | `#98989D` | Labels, axis text, secondary info |
-| `--accent` | `#00E5FF` | **Forecast data**: P50 line, sparklines, main KPI, primary buttons, focus ring |
-| `--band` | `rgba(0, 229, 255, 0.16)` | P10–P90 uncertainty band |
-| `--ok` | `#32D74B` | Status: API online, forecast available, primary model |
-| `--warn` | `#FFD60A` | Status: fallback model, stale forecast, partial data *(added, not in original)* |
-| `--bad` | `#FF453A` | Status: API offline, forecast missing, error |
-| `--bad-bg` | `#3A1C1C` | Error alert background |
-| `--warn-bg` | `rgba(255, 214, 10, 0.10)` | Warning alert background |
-| `--on-accent` | `#121212` | Text on `--accent` buttons |
-| `--accent-fade` | `rgba(0, 229, 255, 0)` | Transparent end of the sparkline gradient |
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `--bg` | `#121212` | `#F4F6F9` | Page background |
+| `--surface` | `#1E1E1E` | `#FFFFFF` | Cards, panels, tiles |
+| `--surface-hover` | `#252525` | `#EDF1F5` | Row or card hover |
+| `--border` | `#2C2C2E` | `#D8DEE6` | Card borders, table row lines, chart grid lines |
+| `--text` | `#FFFFFF` | `#0F172A` | Main text, KPI numbers |
+| `--muted` | `#98989D` | `#586273` | Labels, axis text, secondary info |
+| `--accent` | `#00E5FF` | `#007C94` | **Forecast data**: P50 line, sparklines, main KPI, primary buttons, focus ring |
+| `--band` | `rgba(0, 229, 255, 0.16)` | `rgba(0, 124, 148, 0.14)` | P10–P90 uncertainty band |
+| `--ok` | `#32D74B` | `#16733A` | Status: API online, forecast available, primary model |
+| `--warn` | `#FFD60A` | `#946200` | Status: fallback model, stale forecast, partial data *(added, not in original)* |
+| `--bad` | `#FF453A` | `#C8302B` | Status: API offline, forecast missing, error |
+| `--ok-bg`, `--ok-border` | green at 12 % / 24 % | green at 10 % / 28 % | "Ready" badge |
+| `--warn-bg`, `--warn-border` | yellow at 10 % / 25 % | amber at 10 % / 30 % | Warning alert and badge |
+| `--bad-bg`, `--bad-border` | `#3A1C1C` / red at 30 % | `#FDECEB` / red at 30 % | Error alert and badge |
+| `--on-accent` | `#121212` | `#FFFFFF` | Text on `--accent` buttons |
+| `--accent-fade` | `--accent` at 0 % | `--accent` at 0 % | Transparent end of the sparkline gradient |
+| `--inset` | white at 2 % | navy at 3 % | Empty-state boxes inside a card |
+| `--code-bg` | black at 20 % | navy at 6 % | Inline `code` in alerts |
+| `--map-night`, `--map-day`, `--map-dawn` | dark navy / teal / brown | grey-blue / pale blue / peach | Station map sky for the day replay |
+| `--map-veil`, `--sunlight` | black / `#FFC24D` | navy / `#FFB020` | Night darkening and sunlight tint on the map |
+
+The light values keep at least 4.5:1 contrast for text and status colours on `--surface`, including on the badge and
+alert tints (yellow becomes amber).
 
 Rules:
 
-- Set `color-scheme: dark` on `:root` (not only inside a media query), so native controls such as the date picker
-  render dark.
+- `:root` holds the dark values and `color-scheme: dark`. The light values sit in `:root[data-theme="light"]` and,
+  for Auto, in `@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) }`. Keep both light blocks
+  identical. `color-scheme` follows the theme so native controls such as the date picker match.
 - The chart grid uses `--border`. Remove the old `--grid` token and change `.grid` in `ForecastChart.module.css`
   to `var(--border)` in the same PR.
 - Status colours (`--ok`, `--warn`, `--bad`) mean **status only**. Never use them to decorate a chart.
 - Never show a status by colour alone. Always pair it with a text label or an icon, such as "● Online" or "⚠ Fallback".
-- Do not use pastel colours or white or light backgrounds.
+- Do not use pastel colours, except the light map sky tints (`--map-*`). In light mode, white is for cards only; the page background is `--bg`.
 
 ## 3. Typography
 
@@ -83,6 +96,12 @@ Units sit after the number, smaller and `--muted`: **4,812** <small>kWh</small>.
   focus gives the marker an `--accent` ring, highlights the matching station card (and the reverse), and shows a
   tooltip card. Every marker is a link to the station page. Plants with no coordinates are listed under the map,
   never placed at a guessed position.
+- **Day replay** (station map): a fleet P50 curve with a slider and a **Play the day** button sits under the map.
+  The map shows one 15-minute slot at a time (the fleet peak until someone picks a time): a clock in the corner, the
+  sky tinted from `--map-night` through `--map-dawn` to `--map-day`, and an `--accent` glow under each marker whose
+  area grows with P50 ÷ capacity. Each marker also shows its P50 at that time. Play steps one slot every 110 ms from
+  just before the first forecast power to just after the last. The glow is `--accent`, never a status colour. The slider is a native
+  range input with an `aria-valuetext` of the time and fleet P50, and `prefers-reduced-motion` turns the transitions off.
 - **Tables**: rows have `border-bottom: 1px solid var(--border)`, and a hovered row uses `--surface-hover`. Numbers
   are right-aligned.
 - **Alerts**: `background: var(--bad-bg)`, `color: var(--bad)`, `border-left: 4px solid var(--bad)`,
@@ -115,7 +134,7 @@ a sun, a lightning bolt, a gauge, a solar panel or a clock. Do not use a generic
 - ✅ Show the time zone once per page: "All times Asia/Bangkok (UTC+7)".
 - ✅ Show the issue time and the forecast age wherever a forecast appears, so a stale forecast is obvious.
 - ✅ Use area/band charts to show uncertainty, and keep P50 as a crisp line on top.
-- ❌ Do not use white or pastel backgrounds or light mode.
+- ❌ Do not use pastel backgrounds.
 - ❌ Do not use red or green for anything that is not a status.
 - ❌ Do not show real PEA measurements (actual power) on any public page. See the
   [frontend requirements](../../docs/frontend-requirements.md#5-out-of-scope-for-now).
@@ -128,7 +147,7 @@ a sun, a lightning bolt, a gauge, a solar panel or a clock. Do not use a generic
 | Red alert for "vampire" consumption peaks | Red for API offline, missing or invalid forecast | We forecast generation, not consumption |
 | `#30D158` green gradient under chart lines | Cyan band (`--band`) for P10–P90 | Green is reserved for status. The band shows uncertainty |
 | No warning colour | Added `--warn` `#FFD60A` | Fallback and stale forecasts need a state between OK and error |
-| Light/dark preview | Dark only | Matches the original "don't use white backgrounds" rule and halves the CSS |
+| Light/dark preview | Dark by default, with a light theme and an Auto option | The dashboard is shown in bright rooms and on projectors, where dark pages wash out |
 | Dashboard: 3 KPIs, 8-col chart, 4-col alerts | Kept for the station page; added an overview page with station cards | Several plants need a list → detail flow |
 
 <details>
