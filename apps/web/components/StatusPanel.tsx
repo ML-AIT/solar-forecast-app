@@ -63,7 +63,7 @@ export default function StatusPanel({
     <aside className={styles.panel} aria-label="Forecast status and metadata">
       <div className={styles.panelHeader}>
         <h2 className={styles.title}>Status & Details</h2>
-        <StatusBadge status={badgeStatus} />
+        <StatusBadge status={badgeStatus} mode={forecast?.forecast_mode} />
       </div>
 
       <div className={styles.infoList}>

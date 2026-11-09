@@ -111,7 +111,7 @@ export default function StationMap({ states, highlightedId, onHighlight }: Stati
                   onBlur={() => onHighlight(null)}
                 >
                   <span className={styles.unplacedName}>{state.plant.name}</span>
-                  <StatusBadge status={getStationStatus(state)} />
+                  <StatusBadge status={getStationStatus(state)} mode={state.forecast?.forecast_mode} />
                 </Link>
               </li>
             ))}
@@ -137,7 +137,7 @@ function MapTooltip({ state, x }: { state: PlantForecastState; x: { x: number; y
     >
       <div className={styles.tooltipHead}>
         <span className={styles.tooltipName}>{state.plant.name}</span>
-        <StatusBadge status={getStationStatus(state)} />
+        <StatusBadge status={getStationStatus(state)} mode={state.forecast?.forecast_mode} />
       </div>
       <dl className={styles.tooltipStats}>
         <div>

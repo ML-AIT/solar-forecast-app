@@ -8,7 +8,7 @@ import {
   isForecastStale,
 } from "@/lib/format";
 import Sparkline from "./Sparkline";
-import StatusBadge, { type StatusType } from "./StatusBadge";
+import StatusBadge, { statusLabel, type StatusType } from "./StatusBadge";
 import styles from "./StationCard.module.css";
 
 export type PlantForecastState = {
@@ -16,13 +16,6 @@ export type PlantForecastState = {
   forecast?: Forecast;
   error?: string;
   statusCode?: number;
-};
-
-// Names the fallback, so the dashboard shows which one the forecast used (apps/api/README.md).
-const FALLBACK_LABELS: Record<string, string> = {
-  cached_weather: "Fallback: cached weather",
-  climatology: "Fallback: climatology",
-  baseline: "Fallback: baseline",
 };
 
 type StationCardProps = {
@@ -65,10 +58,6 @@ export default function StationCard({ state, highlighted = false, onHighlight }:
   const { plant, forecast } = state;
   const status = getStationStatus(state);
   const { energy: energyStr, peak: peakStr } = summarizeForecast(forecast);
-  const label =
-    status === "fallback" && forecast?.forecast_mode
-      ? FALLBACK_LABELS[forecast.forecast_mode]
-      : undefined;
 
   let sparklineData: number[] = [];
   let ageOrTime = "";
@@ -92,14 +81,14 @@ export default function StationCard({ state, highlighted = false, onHighlight }:
       onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
       onFocus={onHighlight ? () => onHighlight(plant.id) : undefined}
       onBlur={onHighlight ? () => onHighlight(null) : undefined}
-      aria-label={`${plant.name} (${plant.id}): status ${label ?? status}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
+      aria-label={`${plant.name} (${plant.id}): status ${statusLabel(status, forecast?.forecast_mode)}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
     >
       <div className={styles.topRow}>
         <div className={styles.headerInfo}>
           <span className={styles.plantId}>{plant.id}</span>
           <h2 className={styles.plantName}>{plant.name}</h2>
         </div>
-        <StatusBadge status={status} label={label} />
+        <StatusBadge status={status} mode={forecast?.forecast_mode} />
       </div>
 
       <div className={styles.sparklineArea}>

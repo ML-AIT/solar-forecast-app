@@ -20,7 +20,7 @@ and ticket definitions are specified in [docs/frontend-requirements.md](../../do
 
 1. **Station Overview (`/`)**:
    - High-level system KPIs: Total forecast energy (P50) across complete plants (formatted in kWh or MWh), plant readiness count, and latest issue time.
-   - 4-station card grid (8 columns, 2 × 2): Shows plant capacity, P50 sparkline, P50 energy, peak power, and status badges (`● Forecast ready`, `⚠ Stale`, `⚠ Fallback model`, `✖ No forecast`, `✖ Error`).
+   - 4-station card grid (8 columns, 2 × 2): Shows plant capacity, P50 sparkline, P50 energy, peak power, and status badges (`● Forecast ready`, `⚠ Stale`, `⚠ Fallback: cached weather` / `⚠ Fallback: climatology` (names the `forecast_mode`; the same text on the map and the station page), `✖ No forecast`, `✖ Error`).
    - **Station map** (right 4 columns, stacks under the cards below 1024 px): an SVG map of Thailand with one marker per plant that has coordinates, coloured and labelled by status. Hovering or focusing a marker highlights its card (and the reverse) and shows a tooltip; clicking opens the station page. Plants without coordinates (`lat`/`lon` = `null`) are listed under "Location not confirmed".
    - Fault-resilient parallel loading: Failure of one plant does not break other cards.
    - Header with API health polling every 60 seconds and Asia/Bangkok (`UTC+7`) timezone indication.

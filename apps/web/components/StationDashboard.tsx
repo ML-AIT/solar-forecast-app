@@ -184,7 +184,7 @@ export default function StationDashboard() {
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <h2 className={styles.cardTitle}>Day-Ahead Generation Profile</h2>
-              <StatusBadge status={badgeStatus} />
+              <StatusBadge status={badgeStatus} mode={forecast?.forecast_mode} />
             </div>
 
             {/* S8: Designed loading, empty, and error states */}
