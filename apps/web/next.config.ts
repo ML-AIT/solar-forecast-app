@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Build a fully static site into `out/` (deployed to Azure Static Web Apps).
+  // Build a fully static site into `out/` (deployed to an Azure Storage static website).
   // This means: no API routes, no server-side data fetching at request time.
   output: "export",
   // The Next.js image optimizer needs a server, so turn it off for static export.

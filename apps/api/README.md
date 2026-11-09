@@ -1,7 +1,7 @@
 # Solar Forecast API (`apps/api`)
 
 FastAPI service that serves **day-ahead, 15-minute PV power forecasts (P10/P50/P90, kW)** for the four
-PEA plants. It does **not** train or run the ML model. The model runs as a batch job in the ML repo and writes JSON
+PEA plants. It does **not** train or run the ML model. The model runs as a daily batch job (`apps/forecast-job`) and writes JSON
 files, which this API reads and serves. Until those files exist, the `demo` provider returns a synthetic curve
 (a clear-sky-shaped curve with seeded random clouds). It uses no real plant data.
 
@@ -98,6 +98,8 @@ S03/S04 coordinates are TBD. Update `app/plants.py` once PEA confirms them.
   "date": "2026-10-17",
   "issued_at": "2026-10-16T23:55:00+07:00",
   "model_version": "demo-0.1",
+  "forecast_mode": "primary",
+  "issue_scenario": "d1_2355",
   "unit": "kW",
   "resolution_minutes": 15,
   "timezone": "Asia/Bangkok",
@@ -134,6 +136,26 @@ and returns 500 if they fail):
 - `issued_at` is when the model ran (ISO 8601 with `+07:00`). It must be at or before the forecast's issue
   deadline on D-1.
 - `model_version` identifies the model, e.g. `lgbm-nwp-2026.10.1`. It is shown in the dashboard.
+- `forecast_mode` says how the forecast was made. Optional in the file; a missing value is served as `primary`.
+
+  | Value | Meaning |
+  |---|---|
+  | `primary` | The model selected for this plant, using a fresh weather forecast |
+  | `cached_weather` | The selected model, using the last weather forecast fetched before the cutoff |
+  | `climatology` | Training-only monthly time-slot climatology, because no weather forecast was available |
+  | `baseline` | Another baseline, because the selected model could not run |
+
+  Anything other than `primary` shows a fallback badge in the dashboard that names the mode ("Fallback: climatology"). Any other value is rejected (500).
+- `issue_scenario` says which issue time the forecast was made for. Optional in the file; a missing value is served as
+  `null`. Any other value is rejected (500).
+
+  | Value | Meaning |
+  |---|---|
+  | `d1_2355` | Issued at 23:55 the day before (the final forecast the daily job writes) |
+  | `d1_1000` | Issued at 10:00 the day before |
+  | `d1_1000_morning` | Issued at 10:00 the day before, with that morning's measurements |
+  | `d2_2355` | Issued at 23:55 two days before (the early version, replaced by the final one the next night) |
+
 - `unit` = `"kW"`, `resolution_minutes` = `15`, `timezone` = `"Asia/Bangkok"`.
 
 Write each file atomically: write `2026-10-17.json.tmp`, then rename it. This way the API never reads a half-written

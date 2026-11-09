@@ -1,0 +1,16 @@
+# Only pyproject.toml, uv.lock and the files the Dockerfile copies are needed in the image.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+ml/tests/
+ml/src/S01/
+forecasts/
+models/
+.env
+.env.*
+*.md
+sync_ml_copies.py
+Dockerfile
+.dockerignore

@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -53,4 +54,64 @@ def test_mismatched_plant_in_file_500(file_client: TestClient, tmp_path: Path) -
     out.write_text(forecast.model_dump_json(), encoding="utf-8")
 
     r = file_client.get("/api/v1/forecast", params={"plant_id": "S02", "date": "2026-10-17"})
+    assert r.status_code == 500
+
+
+def _write_payload(root: Path, payload: dict) -> None:
+    out = root / payload["plant_id"] / f"{payload['date']}.json"
+    out.parent.mkdir(parents=True)
+    out.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def _demo_payload() -> dict:
+    return json.loads(DemoForecastProvider().get_forecast("S01", DATE).model_dump_json())
+
+
+def test_fallback_mode_is_served(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "forecast_mode": "climatology"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["forecast_mode"] == "climatology"
+
+
+def test_file_without_mode_defaults_to_primary(file_client: TestClient, tmp_path: Path) -> None:
+    payload = _demo_payload()
+    del payload["forecast_mode"]
+    _write_payload(tmp_path, payload)
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["forecast_mode"] == "primary"
+
+
+def test_unknown_mode_500(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "forecast_mode": "failed"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 500
+
+
+def test_issue_scenario_is_served(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "issue_scenario": "d2_2355"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["issue_scenario"] == "d2_2355"
+
+
+def test_file_without_issue_scenario_is_served(file_client: TestClient, tmp_path: Path) -> None:
+    payload = _demo_payload()
+    del payload["issue_scenario"]
+    _write_payload(tmp_path, payload)
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
+    assert r.status_code == 200
+    assert r.json()["issue_scenario"] is None
+
+
+def test_unknown_issue_scenario_500(file_client: TestClient, tmp_path: Path) -> None:
+    _write_payload(tmp_path, {**_demo_payload(), "issue_scenario": "d0_1200"})
+
+    r = file_client.get("/api/v1/forecast", params={"plant_id": "S01", "date": "2026-10-17"})
     assert r.status_code == 500

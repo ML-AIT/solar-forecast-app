@@ -1,0 +1,39 @@
+[project]
+name = "solar-forecast-job"
+version = "0.1.0"
+description = "Daily job that writes the day-ahead forecast JSON files the API serves."
+readme = "README.md"
+requires-python = ">=3.12"
+# Exact versions, the same as the ML repo's ml/requirements.txt, so the job runs the evaluated code
+# on the same libraries. Change them only together with the ML repo.
+dependencies = [
+    "numpy==2.5.2",
+    "pandas==3.0.5",
+    "pvlib==0.16.1",
+    "pyyaml==6.0.3",
+]
+
+# Installed by `uv sync` by default; skipped in the Docker image with `--no-dev`.
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.17.2",
+    # Only for ml/tests/test_issue_time.py, which checks features against ml/src/S01/data_quality.py.
+    "scikit-learn==1.9.0",
+]
+
+# Scripts, not an installable package: run_forecast_job.py and conftest.py put ml/src on the path.
+[tool.uv]
+package = false
+
+# The ML repo's lint settings, because most files here are unchanged copies of it (sync_ml_copies.py).
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["ml/src"]
+# ml/src/S01 is a test-only copy that the ML repo does not lint either.
+extend-exclude = [".venv", "ml/src/S01"]
+
+[tool.pytest.ini_options]
+testpaths = ["ml/tests"]
+addopts = "-ra"

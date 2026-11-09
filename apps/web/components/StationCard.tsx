@@ -8,7 +8,7 @@ import {
   isForecastStale,
 } from "@/lib/format";
 import Sparkline from "./Sparkline";
-import StatusBadge, { type StatusType } from "./StatusBadge";
+import StatusBadge, { statusLabel, type StatusType } from "./StatusBadge";
 import styles from "./StationCard.module.css";
 
 export type PlantForecastState = {
@@ -81,14 +81,14 @@ export default function StationCard({ state, highlighted = false, onHighlight }:
       onMouseLeave={onHighlight ? () => onHighlight(null) : undefined}
       onFocus={onHighlight ? () => onHighlight(plant.id) : undefined}
       onBlur={onHighlight ? () => onHighlight(null) : undefined}
-      aria-label={`${plant.name} (${plant.id}): status ${status}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
+      aria-label={`${plant.name} (${plant.id}): status ${statusLabel(status, forecast?.forecast_mode)}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
     >
       <div className={styles.topRow}>
         <div className={styles.headerInfo}>
           <span className={styles.plantId}>{plant.id}</span>
           <h2 className={styles.plantName}>{plant.name}</h2>
         </div>
-        <StatusBadge status={status} />
+        <StatusBadge status={status} mode={forecast?.forecast_mode} />
       </div>
 
       <div className={styles.sparklineArea}>

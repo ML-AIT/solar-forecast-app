@@ -1,5 +1,9 @@
 # Solar Forecast App
 
+**Live:** [dashboard](https://stsolarkm.z11.web.core.windows.net/) ·
+[API docs](https://solar-api.gentleflower-ffab9168.japaneast.azurecontainerapps.io/docs). Forecasts for S01 and S02
+are written every night at 23:00 Bangkok time; the API sleeps when idle, so the first request can take a few seconds.
+
 Web app and API that serve **day-ahead 15-min solar PV power forecasts** for four PEA (Thailand) plants,
 deployed on **Azure** with **GitHub Actions** CI/CD. The ML model is trained in a separate repository,
 [Solar_Power_Prediction](https://github.com/pcismyname/Solar_Power_Prediction).
@@ -8,10 +12,11 @@ deployed on **Azure** with **GitHub Actions** CI/CD. The ML model is trained in 
 solar-forecast-app/
 ├── apps/
 │   ├── api/            FastAPI service (Python 3.12, Docker)   → Azure Container Apps
-│   └── web/            Next.js dashboard (static export)       → Azure Static Web Apps  (design: DESIGN.md)
+│   ├── forecast-job/   daily forecast job (Python 3.12, Docker) → Azure Container Apps Job
+│   └── web/            Next.js dashboard (static export)       → Azure Storage static website  (design: DESIGN.md)
 ├── infra/azure/        one-time Azure setup commands
 ├── docs/               architecture.md (stack decision) · frontend-requirements.md (dashboard brief)
-├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml
+├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml · deploy-job.yml
 ├── docker-compose.yml  run both locally
 ├── AGENTS.md           rules for contributors & AI agents
 └── CLAUDE.md
@@ -29,7 +34,7 @@ cd apps/web && npm ci && npm run dev
 ```
 
 The API starts in **demo mode** (`FORECAST_PROVIDER=demo`). It returns synthetic clear-sky-shaped forecasts, so
-the app works without any real data. Set `FORECAST_PROVIDER=file` to serve JSON written by the ML job.
+the app works without any real data. Set `FORECAST_PROVIDER=file` to serve JSON written by the forecast job (`apps/forecast-job`).
 
 ## API
 
@@ -45,12 +50,12 @@ Interactive docs are at `/docs`.
 
 - **CI** (`ci.yml`) runs on every PR and on `main`:
   - API: ruff, pytest and a Docker build.
+  - Forecast job: ruff check, pytest and a Docker build.
   - Web: lint, typecheck and build.
 - **Deploy** runs on merge to `main`, once Azure is configured (see [infra/azure/README.md](infra/azure/README.md)):
   - `deploy-api.yml`: build the image → Azure Container Registry → Container App → smoke test.
-  - `deploy-web.yml`: static build → Static Web App.
+  - `deploy-web.yml`: static build → the storage account's static website.
+  - `deploy-job.yml`: after CI passes, and only when `apps/forecast-job/` changed: build the image → ACR → Container
+    Apps Job. See [apps/forecast-job/README.md](apps/forecast-job/README.md).
 
-## Working agreement
 
-Branch per task, then a PR with one review and green CI before merging. Never commit secrets or real plant data.
-See [AGENTS.md](AGENTS.md).

@@ -7,6 +7,10 @@ from pydantic import BaseModel, Field, model_validator
 
 INTERVALS_PER_DAY = 96  # 24 h x 4 (15-min resolution)
 
+ForecastMode = Literal["primary", "cached_weather", "climatology", "baseline"]
+# Issue time, as the ML repo names it: d1 = the day before, d2 = two days before, then local time.
+IssueScenario = Literal["d1_2355", "d1_1000", "d1_1000_morning", "d2_2355"]
+
 
 class Plant(BaseModel):
     id: str = Field(examples=["S01"])
@@ -34,6 +38,14 @@ class Forecast(BaseModel):
     date: dt.date
     issued_at: dt.datetime
     model_version: str
+    forecast_mode: ForecastMode = Field(
+        default="primary",
+        description="primary = the model selected for this plant; anything else is a fallback.",
+    )
+    issue_scenario: IssueScenario | None = Field(
+        default=None,
+        description="Issue time, e.g. d1_2355 = D-1 23:55 (final); d2_2355 = D-2 23:55 (early).",
+    )
     unit: Literal["kW"] = "kW"
     resolution_minutes: Literal[15] = 15
     timezone: Literal["Asia/Bangkok"] = "Asia/Bangkok"

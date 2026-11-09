@@ -52,7 +52,7 @@ run it is in [apps/web/README.md](../apps/web/README.md).
 | O1 | Loads the plant list (`GET /api/v1/plants`), then **tomorrow's** forecast for every plant **in parallel** (`GET /api/v1/forecast`). "Tomorrow" means tomorrow in Asia/Bangkok, computed in the browser (`tomorrowInBangkok()` in `lib/format.ts`). |
 | O2 | KPI row: **total P50 energy for all plants** (kWh, only from plants that have a complete forecast, labelled "*n* of 4 plants"), **plants with a forecast** ("3 / 4"), and **latest issue time**. |
 | O3 | One **station card** per plant: name and ID, capacity, a status badge, a P50 **sparkline**, P50 energy (kWh) and peak (kW), and "issued *x* h ago" (same future-time rule as S5: if `issued_at` is in the future, show the issue time and no age). |
-| O4 | Status badge rules: `● Forecast ready` (ok) · `⚠ Stale` (warn, issued more than 36 h ago) · `⚠ Fallback model` (warn, see §4) · `✖ No forecast` (bad, API 404) · `✖ Error` (bad, any other failure). If several apply, show only the first in this order: Error > No forecast > Fallback > Stale > Ready. Detect 404 with `err.status === 404` (see FE-1), never by parsing the message. |
+| O4 | Status badge rules: `● Forecast ready` (ok) · `⚠ Stale` (warn, issued more than 36 h ago) · `⚠ Fallback: cached weather` / `⚠ Fallback: climatology` / `⚠ Fallback: baseline` (warn, names the `forecast_mode`, see §4) · `✖ No forecast` (bad, API 404) · `✖ Error` (bad, any other failure). If several apply, show only the first in this order: Error > No forecast > Fallback > Stale > Ready. Detect 404 with `err.status === 404` (see FE-1), never by parsing the message. |
 | O5 | The whole card links to `/station/?id=<plant_id>`. It works with the keyboard (Tab + Enter) and shows a visible focus ring. |
 | O6 | If one plant's forecast fails, **the other cards still render**. A failure must not blank the page. |
 | O7 | API status pill in the header (this exists today: it polls `/health` every 60 s). If the API is offline, show one alert banner with the API URL instead of four broken cards. |
@@ -99,7 +99,7 @@ forecast JSON has no field for it. Plan:
 
 1. **Frontend now:** treat it as optional. Add `forecast_mode?: "primary" | "cached_weather" | "climatology" |
    "baseline"` to the `Forecast` type in `lib/api.ts`. Show "Mode: primary" when the field is missing, and the
-   `⚠ Fallback model` badge when the value is anything other than `primary`.
+   a fallback badge that names the mode (`⚠ Fallback: climatology`) when the value is anything other than `primary`.
 2. **Backend (ticket BE-1):** add the optional field to `apps/api/app/schemas.py` and the demo provider. Then update
    the contract in `apps/api/README.md` **and** open the matching PR in the ML repo, because the contract is shared.
    Do not merge the field in only one repo.

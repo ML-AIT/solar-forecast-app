@@ -1,0 +1,39 @@
+# The four PEA plants: the one place code reads plant metadata from (CONTRIBUTING.md §3).
+#
+# coords_status
+#   exact        from PEA's plant location file (degrees-minutes-seconds, converted to decimal)
+#   approximate  ESTIMATE. PEA gives only the sub-district for S03 and S04, so these points come
+#                from public sources and may be several km off. See
+#                docs/decisions/0003-approximate-s03-s04-coordinates.md before relying on them.
+#
+# capacity_kw is PEA nameplate (AC vs DC unconfirmed, AGENTS.md §1).
+
+plants:
+  S01:
+    location: Nong Waeng, Khok Sung, Sa Kaeo
+    capacity_kw: 6000
+    lat: 13.8670
+    lon: 102.6434
+    coords_status: exact
+    coords_source: "PEA location file: 13°52'1.39\" N, 102°38'36.20\" E"
+  S02:
+    location: Bo Nok, Mueang Prachuap Khiri Khan
+    capacity_kw: 5950
+    lat: 12.0017
+    lon: 99.7959
+    coords_status: exact
+    coords_source: "PEA location file: 12°0'6.04\" N, 99°47'45.38\" E"
+  S03:
+    location: Han Sai, Aranyaprathet, Sa Kaeo
+    capacity_kw: 8000
+    lat: 13.6910
+    lon: 102.5104
+    coords_status: approximate
+    coords_source: "ESTIMATE: Air4Thai station 71t in Aranyaprathet town (PEA gives Han Sai sub-district only)"
+  S04:
+    location: Nong Phayom, Taphan Hin, Phichit
+    capacity_kw: 8000
+    lat: 16.2131
+    lon: 100.4468
+    coords_status: approximate
+    coords_source: "ESTIMATE: Nong Phayom sub-district centre, OpenStreetMap (PEA gives the sub-district only)"

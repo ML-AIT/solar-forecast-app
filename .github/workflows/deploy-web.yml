@@ -1,7 +1,7 @@
-name: Deploy Web (Azure Static Web Apps)
+name: Deploy Web (Azure Storage static website)
 
 # Disabled until Azure is set up: set repository variable DEPLOY_WEB=true,
-# variable API_BASE_URL (https://<api-fqdn>) and secret AZURE_STATIC_WEB_APPS_API_TOKEN.
+# plus variables API_BASE_URL (https://<api-fqdn>), STORAGE_ACCOUNT and the Azure login IDs.
 on:
   push:
     branches: [main]
@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  id-token: write   # OIDC login to Azure (no stored passwords)
   contents: read
 
 jobs:
@@ -32,10 +33,23 @@ jobs:
           npm ci
           npm run build
 
-      - uses: Azure/static-web-apps-deploy@v1
+      - uses: azure/login@v2
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          app_location: apps/web/out
-          skip_app_build: true
-          skip_api_build: true
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Upload to the storage website
+        run: |
+          az storage blob upload-batch \
+            --account-name "${{ vars.STORAGE_ACCOUNT }}" \
+            --auth-mode login \
+            --destination '$web' \
+            --source apps/web/out \
+            --overwrite
+
+      - name: Smoke test
+        run: |
+          WEB_URL=$(az storage account show -n "${{ vars.STORAGE_ACCOUNT }}" \
+                    -g "${{ vars.AZURE_RESOURCE_GROUP }}" --query primaryEndpoints.web -o tsv)
+          curl -fsS -o /dev/null "$WEB_URL"
