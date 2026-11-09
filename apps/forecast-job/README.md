@@ -55,6 +55,23 @@ docker build -t solar-forecast-job apps/forecast-job
 docker run --rm -v <models>:/models:ro -v <forecasts>:/forecasts solar-forecast-job
 ```
 
+## Operation check (replay)
+
+`ml/scripts/replay_forecast_job.py` measures the proposal's prototype-operation criteria (§1.3). It runs this image once
+per past target day with `--date` (10 Oct to 8 Nov 2026 by default, S01 and S02), checks every file (96 finite values
+in 15-min order, P10 ≤ P50 ≤ P90, issue time, model version, mode), counts modes and failures, and times each run. It
+then adds the scheduled Azure runs since that window from Log Analytics. The result is
+[`docs/operation-replay/`](../../docs/operation-replay/README.md). Run it from the repo root; it needs Docker, the model
+files and, for the live part, `az login` (read only):
+
+```bash
+python apps/forecast-job/ml/scripts/replay_forecast_job.py --models <models>   # replay, live runs, summary (~5 min)
+python apps/forecast-job/ml/scripts/replay_forecast_job.py live summary        # only refresh the live runs
+```
+
+The replay's forecast files go to a temporary folder and are deleted; only the per-day CSVs (no power values) and the
+summary are kept. It is a manual check, not part of CI, because it needs the model files and the live weather API.
+
 ## In Azure
 
 The image runs as the Container Apps Job `solar-forecast-daily` on cron `0 16 * * *` (23:00 Bangkok; Azure reads cron

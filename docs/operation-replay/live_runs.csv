@@ -1,0 +1,5 @@
+execution,status,started_bangkok,finished_bangkok,run_seconds,plant_id,date,scenario,action,forecast_mode,model_version,plant_seconds,reason
+solar-forecast-daily-29902560,Succeeded,2026-11-08 23:00:00,2026-11-08 23:00:42,42,S01,2026-11-09,d1_2355,written,primary,pvlib-S01-2024.08.07,4.6,
+solar-forecast-daily-29902560,Succeeded,2026-11-08 23:00:00,2026-11-08 23:00:42,42,S02,2026-11-09,d1_2355,written,primary,pvlib-S02-2024.07.19,4.0,
+solar-forecast-daily-29902560,Succeeded,2026-11-08 23:00:00,2026-11-08 23:00:42,42,S01,2026-11-10,d2_2355,written,primary,pvlib-S01-2024.08.07,0.4,
+solar-forecast-daily-29902560,Succeeded,2026-11-08 23:00:00,2026-11-08 23:00:42,42,S02,2026-11-10,d2_2355,written,primary,pvlib-S02-2024.07.19,0.5,
