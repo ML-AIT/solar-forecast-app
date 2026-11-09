@@ -92,3 +92,25 @@ export function isForecastStale(issuedAtIso: string, now: Date = new Date()): bo
   return diffHours > 36;
 }
 
+/** Shift a YYYY-MM-DD date by a given number of days (+1 for next day, -1 for prev day). */
+export function shiftDate(dateStr: string, days: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  if (!y || !m || !d) return dateStr;
+  const dateObj = new Date(Date.UTC(y, m - 1, d));
+  dateObj.setUTCDate(dateObj.getUTCDate() + days);
+  return dateObj.toISOString().slice(0, 10);
+}
+
+/** Validate whether a string is a valid YYYY-MM-DD date. */
+export function isValidDateStr(dateStr: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dateObj = new Date(Date.UTC(y, m - 1, d));
+  return (
+    dateObj.getUTCFullYear() === y &&
+    dateObj.getUTCMonth() === m - 1 &&
+    dateObj.getUTCDate() === d
+  );
+}
+
+

@@ -1,0 +1,146 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0 16px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 150ms ease;
+}
+
+.backLink:hover {
+  color: var(--accent);
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.timeZoneNote {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.mainRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stationTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.stationCapacity {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.stationCapacity strong {
+  font-family: var(--font-jetbrains-mono), monospace;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.navButton:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.navButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dateInput {
+  height: 36px;
+  padding: 0 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 13px;
+  color-scheme: dark;
+  transition: border-color 150ms ease;
+}
+
+.dateInput:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (max-width: 640px) {
+  .mainRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dateNav {
+    width: 100%;
+  }
+
+  .dateInput {
+    flex: 1;
+  }
+}
+
