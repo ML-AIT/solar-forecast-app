@@ -15,6 +15,7 @@ import {
   tomorrowInBangkok,
 } from "@/lib/format";
 import Alert from "./Alert";
+import DataTable from "./DataTable";
 import ForecastChart from "./ForecastChart";
 import StationHeader from "./StationHeader";
 import StationKpis from "./StationKpis";
@@ -220,7 +221,7 @@ export default function StationDashboard() {
           </div>
         </div>
 
-        {/* 4-col Status & Alerts Panel (S5) */}
+        {/* 4-col Status & Alerts Panel (S5, S6) */}
         <StatusPanel
           plant={plant}
           forecast={forecast}
@@ -228,6 +229,11 @@ export default function StationDashboard() {
           error={forecastError}
         />
       </section>
+
+      {/* S7: 96-row collapsible data table spanning 12 columns */}
+      {forecast && forecast.points.length > 0 && (
+        <DataTable points={forecast.points} />
+      )}
     </main>
   );
 }

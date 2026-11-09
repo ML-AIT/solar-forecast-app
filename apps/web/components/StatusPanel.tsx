@@ -1,4 +1,5 @@
 import type { Forecast, Plant } from "@/lib/api";
+import { exportForecastToCsv, exportForecastToJson } from "@/lib/export";
 import {
   formatDateTime,
   formatForecastAge,
@@ -45,6 +46,18 @@ export default function StatusPanel({
   const pointCountText = forecast
     ? `${forecast.points.length} × ${forecast.resolution_minutes ?? 15} min`
     : "–";
+
+  const handleDownloadCsv = () => {
+    if (forecast) {
+      exportForecastToCsv(forecast);
+    }
+  };
+
+  const handleDownloadJson = () => {
+    if (forecast) {
+      exportForecastToJson(forecast);
+    }
+  };
 
   return (
     <aside className={styles.panel} aria-label="Forecast status and metadata">
@@ -127,6 +140,28 @@ export default function StatusPanel({
             Forecast contains only {forecast?.points.length} of 96 expected intervals.
           </Alert>
         )}
+      </div>
+
+      {/* S6: Download buttons for CSV and JSON */}
+      <div className={styles.downloadSection}>
+        <button
+          type="button"
+          className={styles.downloadBtn}
+          onClick={handleDownloadCsv}
+          disabled={!forecast || forecast.points.length === 0}
+          title={forecast ? `Download forecast_${plant.id}_${forecast.date}.csv` : "No forecast data"}
+        >
+          Download CSV
+        </button>
+        <button
+          type="button"
+          className={styles.downloadBtn}
+          onClick={handleDownloadJson}
+          disabled={!forecast}
+          title={forecast ? `Download forecast_${plant.id}_${forecast.date}.json` : "No forecast data"}
+        >
+          Download JSON
+        </button>
       </div>
 
       {children}
