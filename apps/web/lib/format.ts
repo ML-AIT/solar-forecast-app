@@ -2,12 +2,15 @@
 
 export const PLANT_TIMEZONE = "Asia/Bangkok";
 
+/** Today's date in Bangkok as "YYYY-MM-DD". */
+export function todayInBangkok(now: Date = new Date()): string {
+  // "en-CA" formats dates as YYYY-MM-DD.
+  return new Intl.DateTimeFormat("en-CA", { timeZone: PLANT_TIMEZONE }).format(now);
+}
+
 /** Tomorrow's date in Bangkok as "YYYY-MM-DD" (the day-ahead forecast target). */
 export function tomorrowInBangkok(): string {
-  // "en-CA" formats dates as YYYY-MM-DD.
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: PLANT_TIMEZONE,
-  }).format(new Date());
+  const today = todayInBangkok();
   const d = new Date(`${today}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + 1);
   return d.toISOString().slice(0, 10);
@@ -84,8 +87,17 @@ export function formatForecastAge(issuedAtIso: string, now: Date = new Date()): 
   return `${diffDays} d ago`;
 }
 
-/** Check if a forecast was issued more than 36 hours ago. */
-export function isForecastStale(issuedAtIso: string, now: Date = new Date()): boolean {
+/**
+ * Check if a forecast for today or a later date was issued more than 36 hours ago.
+ * A forecast for a past date is history, not stale, so it is never flagged.
+ */
+export function isForecastStale(
+  forecastDate: string,
+  issuedAtIso: string,
+  now: Date = new Date(),
+): boolean {
+  // YYYY-MM-DD strings compare correctly as text.
+  if (forecastDate < todayInBangkok(now)) return false;
   const issued = new Date(issuedAtIso);
   if (Number.isNaN(issued.getTime())) return false;
   const diffHours = (now.getTime() - issued.getTime()) / (1000 * 60 * 60);
