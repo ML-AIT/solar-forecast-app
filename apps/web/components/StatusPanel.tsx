@@ -25,7 +25,7 @@ export function getForecastStatusBadge(
   if (error) return "error";
   if (isNotFound || !forecast) return "missing";
   if (forecast.forecast_mode && forecast.forecast_mode !== "primary") return "fallback";
-  if (isForecastStale(forecast.issued_at)) return "stale";
+  if (isForecastStale(forecast.date, forecast.issued_at)) return "stale";
   return "ready";
 }
 
@@ -38,7 +38,7 @@ export default function StatusPanel({
 }: StatusPanelProps) {
   const badgeStatus = getForecastStatusBadge(forecast, isNotFound, error);
   const age = forecast?.issued_at ? formatForecastAge(forecast.issued_at) : null;
-  const isStale = forecast ? isForecastStale(forecast.issued_at) : false;
+  const isStale = forecast ? isForecastStale(forecast.date, forecast.issued_at) : false;
   const isShort = Boolean(forecast && forecast.points.length < 96);
   const isFallback = Boolean(forecast?.forecast_mode && forecast.forecast_mode !== "primary");
   const forecastMode = forecast?.forecast_mode ?? "primary";

@@ -48,7 +48,7 @@ export function getStationStatus(state: PlantForecastState): StatusType {
   if (forecast.forecast_mode && forecast.forecast_mode !== "primary") {
     return "fallback";
   }
-  if (isForecastStale(forecast.issued_at)) {
+  if (isForecastStale(forecast.date, forecast.issued_at)) {
     return "stale";
   }
   return "ready";
