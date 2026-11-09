@@ -79,7 +79,8 @@ export default function ForecastChart({ points, capacityKw }: Props) {
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className={styles.svg}
         role="img"
-        aria-label="Solar day-ahead generation forecast chart: P50 line with P10–P90 uncertainty band"
+        aria-label={`Solar day-ahead generation forecast chart: P50 line with P10–P90 uncertainty band up to ${formatNumber(yMax)} kW`}
+        tabIndex={0}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHover(null)}
         onTouchStart={handleTouch}
@@ -87,6 +88,10 @@ export default function ForecastChart({ points, capacityKw }: Props) {
         onTouchEnd={() => setHover(null)}
         onTouchCancel={() => setHover(null)}
       >
+        <title>Solar Generation Forecast Chart</title>
+        <desc>
+          Interactive 15-minute generation profile with median line and 10th to 90th percentile uncertainty band.
+        </desc>
         {/* Horizontal grid lines & y-axis labels */}
         {yTicks.map((v) => (
           <g key={v}>

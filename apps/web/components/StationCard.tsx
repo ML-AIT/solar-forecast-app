@@ -74,7 +74,7 @@ export default function StationCard({ state }: StationCardProps) {
     <Link
       href={`/station/?id=${encodeURIComponent(plant.id)}`}
       className={styles.card}
-      aria-label={`${plant.name}, status ${status}`}
+      aria-label={`${plant.name} (${plant.id}): status ${status}. Capacity ${formatNumber(plant.capacity_kw)} kW. P50 Energy ${energyStr}. Peak ${peakStr}.`}
     >
       <div className={styles.topRow}>
         <div className={styles.headerInfo}>
