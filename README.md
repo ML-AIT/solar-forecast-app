@@ -1,5 +1,9 @@
 # Solar Forecast App
 
+**Live:** [dashboard](https://stsolarkm.z11.web.core.windows.net/) ·
+[API docs](https://solar-api.gentleflower-ffab9168.japaneast.azurecontainerapps.io/docs). Forecasts for S01 and S02
+are written every night at 23:00 Bangkok time; the API sleeps when idle, so the first request can take a few seconds.
+
 Web app and API that serve **day-ahead 15-min solar PV power forecasts** for four PEA (Thailand) plants,
 deployed on **Azure** with **GitHub Actions** CI/CD. The ML model is trained in a separate repository,
 [Solar_Power_Prediction](https://github.com/pcismyname/Solar_Power_Prediction).
