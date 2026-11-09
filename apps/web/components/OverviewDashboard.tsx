@@ -14,6 +14,7 @@ import {
   formatEnergy,
   tomorrowInBangkok,
 } from "@/lib/format";
+import Alert from "./Alert";
 import Header from "./Header";
 import OverviewKpis from "./OverviewKpis";
 import StationCard, { type PlantForecastState } from "./StationCard";
@@ -164,26 +165,15 @@ export default function OverviewDashboard() {
       <Header subtitle={`Forecast for ${dateFormatted}`} />
 
       {apiStatus === "offline" && (
-        <div className={styles.alertBanner} role="alert">
-          <span className={styles.alertIcon} aria-hidden="true">
-            ✖
-          </span>
-          <div>
-            <strong>API is currently offline.</strong> Could not establish a connection to{" "}
-            <code>{API_BASE_URL}</code>. Please check that the API service is running.
-          </div>
-        </div>
+        <Alert variant="error" title="API is currently offline">
+          Could not establish a connection to <code>{API_BASE_URL}</code>. Please check that the API service is running.
+        </Alert>
       )}
 
       {plantsError && apiStatus !== "offline" && (
-        <div className={styles.alertBanner} role="alert">
-          <span className={styles.alertIcon} aria-hidden="true">
-            ✖
-          </span>
-          <div>
-            <strong>Could not load plant list:</strong> {plantsError}
-          </div>
-        </div>
+        <Alert variant="error" title="Could not load plant list">
+          {plantsError}
+        </Alert>
       )}
 
       {/* KPI row */}

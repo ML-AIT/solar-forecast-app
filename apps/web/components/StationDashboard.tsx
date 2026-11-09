@@ -11,15 +11,15 @@ import {
   type Plant,
 } from "@/lib/api";
 import {
-  formatDateTime,
-  formatForecastAge,
   isValidDateStr,
   tomorrowInBangkok,
 } from "@/lib/format";
+import Alert from "./Alert";
 import ForecastChart from "./ForecastChart";
 import StationHeader from "./StationHeader";
 import StationKpis from "./StationKpis";
 import StatusBadge, { type StatusType } from "./StatusBadge";
+import StatusPanel from "./StatusPanel";
 import styles from "./StationDashboard.module.css";
 
 export default function StationDashboard() {
@@ -126,11 +126,9 @@ export default function StationDashboard() {
   if (plantsError) {
     return (
       <main className={`app-container ${styles.page}`}>
-        <div className={styles.alertBanner} role="alert">
-          <div>
-            <strong>Error loading plants:</strong> {plantsError}
-          </div>
-        </div>
+        <Alert variant="error" title="Error loading plants">
+          {plantsError}
+        </Alert>
       </main>
     );
   }
@@ -163,10 +161,6 @@ export default function StationDashboard() {
   } else if (forecast?.forecast_mode && forecast.forecast_mode !== "primary") {
     badgeStatus = "fallback";
   }
-
-  const ageText = forecast?.issued_at
-    ? formatForecastAge(forecast.issued_at)
-    : null;
 
   return (
     <main className={`app-container ${styles.page}`}>
@@ -212,12 +206,9 @@ export default function StationDashboard() {
             )}
 
             {!forecastLoading && forecastError && (
-              <div className={styles.alertBanner} role="alert">
-                <span aria-hidden="true">✖</span>
-                <div>
-                  <strong>Failed to load forecast:</strong> {forecastError}
-                </div>
-              </div>
+              <Alert variant="error" title="Failed to load forecast">
+                {forecastError}
+              </Alert>
             )}
 
             {!forecastLoading && forecast && (
@@ -229,48 +220,13 @@ export default function StationDashboard() {
           </div>
         </div>
 
-        {/* 4-col side panel (FE-5 will expand, FE-3 provides structure) */}
-        <aside className={styles.sideColumn} aria-label="Forecast metadata">
-          <div className={styles.card}>
-            <h2 className={styles.cardTitle}>Forecast Details</h2>
-            <div className={styles.infoList}>
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Station ID</span>
-                <span className={styles.infoValue}>{plant.id}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Model Version</span>
-                <span className={styles.infoValue}>
-                  {forecast?.model_version ?? "–"}
-                </span>
-              </div>
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Issued At</span>
-                <span className={styles.infoValue}>
-                  {forecast?.issued_at ? formatDateTime(forecast.issued_at) : "–"}
-                </span>
-              </div>
-              {ageText && (
-                <div className={styles.infoRow}>
-                  <span className={styles.infoLabel}>Forecast Age</span>
-                  <span className={styles.infoValue}>{ageText}</span>
-                </div>
-              )}
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Points</span>
-                <span className={styles.infoValue}>
-                  {forecast?.points ? `${forecast.points.length} × 15 min` : "–"}
-                </span>
-              </div>
-              <div className={styles.infoRow}>
-                <span className={styles.infoLabel}>Time Zone</span>
-                <span className={styles.infoValue}>
-                  {forecast?.timezone ?? "Asia/Bangkok"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </aside>
+        {/* 4-col Status & Alerts Panel (S5) */}
+        <StatusPanel
+          plant={plant}
+          forecast={forecast}
+          isNotFound={isForecastNotFound}
+          error={forecastError}
+        />
       </section>
     </main>
   );
