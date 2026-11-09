@@ -16,7 +16,8 @@ evaluated. The `ml/` layout is the ML repo's, so the paths match between the two
 | `ml/src/S01/` | ML repo (copy, tests only: `test_issue_time.py` checks the job's features against the notebooks' builder; not in the image) |
 | `ml/src/solar/forecast_job.py`, `ml/scripts/run_forecast_job.py`, `ml/tests/test_forecast_job.py`, everything else here | This repo |
 
-Copied from the ML repo at **`cabd66b`**, plus the `PvlibBaseline.from_dict` fix, which is still waiting to be merged in the ML repo.
+Copied from the ML repo at **`e85b08c`**, plus the `PvlibBaseline.from_dict` fix (loads saved model files that carry extra
+keys), which is waiting to be merged in the ML repo.
 
 When the ML repo changes one of the copied files, update the copies from a clone of it and record its commit above.
 Run this from the repo root:

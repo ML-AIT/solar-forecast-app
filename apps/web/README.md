@@ -62,7 +62,7 @@ and ticket definitions are specified in [docs/frontend-requirements.md](../../do
 | `components/StatusBadge.tsx` | Status pill badges with symbols and text (`ready`, `stale`, `fallback`, `missing`, `error`) |
 | `components/Alert.tsx` | Reusable error and warning alert banners |
 | `components/DataTable.tsx` | Collapsible 96-row interval table with dimmed zero-generation night rows |
-| `public/staticwebapp.config.json` | Azure Static Web Apps routing and fallback configuration |
+| `public/staticwebapp.config.json` | Static Web Apps routing; ignored by the storage website that hosts the dashboard now |
 
 ## Run locally
 
@@ -96,19 +96,16 @@ npx serve out       # Preview the production static export
 
 - `GET /health` → `{"status": "ok", ...}` (polled every 60 s for the status pill)
 - `GET /api/v1/plants` → `[{id, name, capacity_kw, lat, lon}, ...]`
-- `GET /api/v1/forecast?plant_id=S01&date=YYYY-MM-DD` → `{plant_id, date, issued_at, model_version, forecast_mode, unit, resolution_minutes, timezone, points: [{timestamp, p10, p50, p90} × 96]}`
+- `GET /api/v1/forecast?plant_id=S01&date=YYYY-MM-DD` → `{plant_id, date, issued_at, model_version, forecast_mode, issue_scenario, unit, resolution_minutes, timezone, points: [{timestamp, p10, p50, p90} × 96]}`
 
 Daily energy calculation = `Σ(p50) × resolution_minutes / 60` (i.e. `× 0.25` for 15-min intervals), in kWh (or MWh if $\ge$ 10,000 kWh).
 
-## Deploy to Azure Static Web Apps
+## Deploy
 
-1. Azure Portal → **Static Web Apps** → Create → plan **Free**, source **GitHub**, select repository and branch.
-2. Build configuration:
-   - App location: `apps/web`
-   - Api location: *(empty — API is hosted on Azure App Service / Container Apps)*
-   - Output location: `out`
-3. Configure `NEXT_PUBLIC_API_BASE_URL` in GitHub Actions secrets or repository variables so the build bakes the production API URL into the client bundle.
-4. Add the Azure Static Web Apps domain to the FastAPI CORS allow-list in `apps/api`.
+`.github/workflows/deploy-web.yml` builds the site with `NEXT_PUBLIC_API_BASE_URL` = the `API_BASE_URL` variable
+and uploads `out/` to the `$web` container of the storage account's static website (index `index.html`, error page
+`404.html`). Every page is a real file, so no routing rules are needed. The website URL must be in the API's
+`ALLOWED_ORIGINS`. Setup: `infra/azure/README.md`.
 
 ## Constraints of static export
 

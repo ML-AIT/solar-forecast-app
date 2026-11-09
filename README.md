@@ -9,7 +9,7 @@ solar-forecast-app/
 ├── apps/
 │   ├── api/            FastAPI service (Python 3.12, Docker)   → Azure Container Apps
 │   ├── forecast-job/   daily forecast job (Python 3.12, Docker) → Azure Container Apps Job
-│   └── web/            Next.js dashboard (static export)       → Azure Static Web Apps  (design: DESIGN.md)
+│   └── web/            Next.js dashboard (static export)       → Azure Storage static website  (design: DESIGN.md)
 ├── infra/azure/        one-time Azure setup commands
 ├── docs/               architecture.md (stack decision) · frontend-requirements.md (dashboard brief)
 ├── .github/workflows/  ci.yml · deploy-api.yml · deploy-web.yml · deploy-job.yml
@@ -50,7 +50,7 @@ Interactive docs are at `/docs`.
   - Web: lint, typecheck and build.
 - **Deploy** runs on merge to `main`, once Azure is configured (see [infra/azure/README.md](infra/azure/README.md)):
   - `deploy-api.yml`: build the image → Azure Container Registry → Container App → smoke test.
-  - `deploy-web.yml`: static build → Static Web App.
+  - `deploy-web.yml`: static build → the storage account's static website.
   - `deploy-job.yml`: after CI passes, and only when `apps/forecast-job/` changed: build the image → ACR → Container
     Apps Job. See [apps/forecast-job/README.md](apps/forecast-job/README.md).
 
