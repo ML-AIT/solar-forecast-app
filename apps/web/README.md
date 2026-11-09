@@ -20,7 +20,8 @@ and ticket definitions are specified in [docs/frontend-requirements.md](../../do
 
 1. **Station Overview (`/`)**:
    - High-level system KPIs: Total forecast energy (P50) across complete plants (formatted in kWh or MWh), plant readiness count, and latest issue time.
-   - 4-station card grid: Shows plant capacity, P50 sparkline, P50 energy, peak power, and status badges (`● Forecast ready`, `⚠ Stale`, `⚠ Fallback model`, `✖ No forecast`, `✖ Error`).
+   - 4-station card grid (8 columns, 2 × 2): Shows plant capacity, P50 sparkline, P50 energy, peak power, and status badges (`● Forecast ready`, `⚠ Stale`, `⚠ Fallback model`, `✖ No forecast`, `✖ Error`).
+   - **Station map** (right 4 columns, stacks under the cards below 1024 px): an SVG map of Thailand with one marker per plant that has coordinates, coloured and labelled by status. Hovering or focusing a marker highlights its card (and the reverse) and shows a tooltip; clicking opens the station page. Plants without coordinates (`lat`/`lon` = `null`) are listed under "Location not confirmed".
    - Fault-resilient parallel loading: Failure of one plant does not break other cards.
    - Header with API health polling every 60 seconds and Asia/Bangkok (`UTC+7`) timezone indication.
    - Offline alert banner shown when the API backend cannot be reached.
@@ -49,6 +50,9 @@ and ticket definitions are specified in [docs/frontend-requirements.md](../../do
 | `components/OverviewDashboard.tsx` | Overview page state, parallel forecast fetching, and grid layout |
 | `components/OverviewKpis.tsx` | 3-column system summary KPI tiles |
 | `components/StationCard.tsx` | Station card with P50 sparkline, peak power, energy, and link to station page |
+| `components/StationMap.tsx` | Overview map of Thailand: status markers, hover/focus tooltip, card highlight sync, list of plants without coordinates |
+| `lib/thailandMap.ts` | Generated: pre-projected Thailand and neighbour outlines (Natural Earth, public domain) and `projectToMap(lon, lat)` |
+| `scripts/gen_thailand_map.py` | Regenerates `lib/thailandMap.ts` (run only if the map window or source data changes) |
 | `components/Sparkline.tsx` | Pure SVG area sparkline with gradient fill |
 | `components/StationDashboard.tsx` | Station page state controller, query param synchronization, and 12-col layout |
 | `components/StationHeader.tsx` | Station subheader with back link, capacity, and previous/next day date picker |

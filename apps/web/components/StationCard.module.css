@@ -13,7 +13,8 @@
   outline: none;
 }
 
-.card:hover {
+.card:hover,
+.card.highlighted {
   background: var(--surface-hover);
   border-color: var(--accent);
 }

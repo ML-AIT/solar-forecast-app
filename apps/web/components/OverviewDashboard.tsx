@@ -18,6 +18,7 @@ import Alert from "./Alert";
 import Header from "./Header";
 import OverviewKpis from "./OverviewKpis";
 import StationCard, { type PlantForecastState } from "./StationCard";
+import StationMap from "./StationMap";
 import styles from "./OverviewDashboard.module.css";
 
 type ApiStatus = "checking" | "online" | "offline";
@@ -44,6 +45,8 @@ export default function OverviewDashboard() {
   const [loading, setLoading] = useState(true);
   const [plantsError, setPlantsError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+  // Station hovered/focused on a card or on the map, so the other one can highlight it too.
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   // 1) Health polling
   useEffect(() => {
@@ -186,20 +189,37 @@ export default function OverviewDashboard() {
         formattedIssueTime={formattedIssueTime}
       />
 
-      {/* Station Cards Grid */}
-      <section className={styles.stationsSection} aria-label="Monitored solar stations">
-        <div className={styles.gridCards}>
-          {plantsState.map((state) => (
-            <StationCard key={state.plant.id} state={state} />
-          ))}
-        </div>
-
-        {loading && plantsState.length === 0 && (
-          <div className={styles.loadingPlaceholder}>
-            <p>Loading stations and day-ahead forecasts…</p>
+      {/* Station cards (left, 8 cols) + station map (right, 4 cols) */}
+      <div className={styles.body}>
+        <section className={styles.stationsSection} aria-label="Monitored solar stations">
+          <div className={styles.gridCards}>
+            {plantsState.map((state) => (
+              <StationCard
+                key={state.plant.id}
+                state={state}
+                highlighted={highlightedId === state.plant.id}
+                onHighlight={setHighlightedId}
+              />
+            ))}
           </div>
+
+          {loading && plantsState.length === 0 && (
+            <div className={styles.loadingPlaceholder}>
+              <p>Loading stations and day-ahead forecasts…</p>
+            </div>
+          )}
+        </section>
+
+        {plantsState.length > 0 && (
+          <aside className={styles.mapColumn}>
+            <StationMap
+              states={plantsState}
+              highlightedId={highlightedId}
+              onHighlight={setHighlightedId}
+            />
+          </aside>
         )}
-      </section>
+      </div>
     </main>
   );
 }

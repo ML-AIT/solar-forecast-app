@@ -6,7 +6,7 @@ type StatusBadgeProps = {
   status: StatusType;
 };
 
-const STATUS_CONFIG: Record<
+export const STATUS_CONFIG: Record<
   StatusType,
   { label: string; symbol: string; variant: "ok" | "warn" | "bad" }
 > = {
