@@ -1,4 +1,4 @@
-/* Colour tokens from DESIGN.md. Dark only. */
+/* Colour tokens from DESIGN.md. Dark is the default; light comes from the toggle or the OS setting. */
 :root {
   --bg: #121212;
   --surface: #1E1E1E;
@@ -11,12 +11,91 @@
   --ok: #32D74B;
   --warn: #FFD60A;
   --bad: #FF453A;
-  --bad-bg: #3A1C1C;
+  --ok-bg: rgba(50, 215, 75, 0.12);
+  --ok-border: rgba(50, 215, 75, 0.24);
   --warn-bg: rgba(255, 214, 10, 0.10);
+  --warn-border: rgba(255, 214, 10, 0.25);
+  --bad-bg: #3A1C1C;
+  --bad-border: rgba(255, 69, 58, 0.3);
   --on-accent: #121212;
   --accent-fade: rgba(0, 229, 255, 0);
+  --inset: rgba(255, 255, 255, 0.02);
+  --code-bg: rgba(0, 0, 0, 0.2);
+
+  /* Station map day replay */
+  --map-night: #06080D;
+  --map-day: #0D2630;
+  --map-dawn: #3B2414;
+  --map-veil: #000000;
+  --sunlight: #FFC24D;
 
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #F4F6F9;
+  --surface: #FFFFFF;
+  --surface-hover: #EDF1F5;
+  --border: #D8DEE6;
+  --text: #0F172A;
+  --muted: #586273;
+  --accent: #007C94;
+  --band: rgba(0, 124, 148, 0.14);
+  --ok: #1B7F3A;
+  --warn: #946200;
+  --bad: #C8302B;
+  --ok-bg: rgba(27, 127, 58, 0.10);
+  --ok-border: rgba(27, 127, 58, 0.28);
+  --warn-bg: rgba(148, 98, 0, 0.10);
+  --warn-border: rgba(148, 98, 0, 0.30);
+  --bad-bg: #FDECEB;
+  --bad-border: rgba(200, 48, 43, 0.30);
+  --on-accent: #FFFFFF;
+  --accent-fade: rgba(0, 124, 148, 0);
+  --inset: rgba(15, 23, 42, 0.03);
+  --code-bg: rgba(15, 23, 42, 0.06);
+
+  --map-night: #B9C4D6;
+  --map-day: #D9EEF5;
+  --map-dawn: #F8DCC3;
+  --map-veil: #1B2740;
+  --sunlight: #FFB020;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F4F6F9;
+    --surface: #FFFFFF;
+    --surface-hover: #EDF1F5;
+    --border: #D8DEE6;
+    --text: #0F172A;
+    --muted: #586273;
+    --accent: #007C94;
+    --band: rgba(0, 124, 148, 0.14);
+    --ok: #1B7F3A;
+    --warn: #946200;
+    --bad: #C8302B;
+    --ok-bg: rgba(27, 127, 58, 0.10);
+    --ok-border: rgba(27, 127, 58, 0.28);
+    --warn-bg: rgba(148, 98, 0, 0.10);
+    --warn-border: rgba(148, 98, 0, 0.30);
+    --bad-bg: #FDECEB;
+    --bad-border: rgba(200, 48, 43, 0.30);
+    --on-accent: #FFFFFF;
+    --accent-fade: rgba(0, 124, 148, 0);
+    --inset: rgba(15, 23, 42, 0.03);
+    --code-bg: rgba(15, 23, 42, 0.06);
+
+    --map-night: #B9C4D6;
+    --map-day: #D9EEF5;
+    --map-dawn: #F8DCC3;
+    --map-veil: #1B2740;
+    --sunlight: #FFB020;
+
+    color-scheme: light;
+  }
 }
 
 * {

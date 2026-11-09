@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { type Plant } from "@/lib/api";
 import { formatNumber, shiftDate } from "@/lib/format";
+import ThemeToggle from "./ThemeToggle";
 import styles from "./StationHeader.module.css";
 
 type StationHeaderProps = {
@@ -30,7 +31,10 @@ export default function StationHeader({
         <Link href="/" className={styles.backLink}>
           ← All stations
         </Link>
-        <span className={styles.timeZoneNote}>All times Asia/Bangkok (UTC+7)</span>
+        <div className={styles.topActions}>
+          <span className={styles.timeZoneNote}>All times Asia/Bangkok (UTC+7)</span>
+          <ThemeToggle />
+        </div>
       </div>
 
       <div className={styles.mainRow}>
